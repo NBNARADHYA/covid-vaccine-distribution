@@ -1,5 +1,5 @@
 import { SignUpProps } from "../../models/signUp";
-import { isEmail } from "../../models/utils/isEmail";
+import { isEmail } from "../utils/isEmail";
 
 export const validate = ({
   email,
