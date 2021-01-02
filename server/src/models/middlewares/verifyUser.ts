@@ -9,10 +9,10 @@ export const verifyUser = async (
   res: Response,
   next: NextFunction
 ): Promise<void | Response> => {
-  if (!req.headers.Authorization)
+  if (!req.headers.authorization)
     return res.status(400).send({ error: "Authorization needed" });
 
-  const authorization = (req.headers.Authorization as string).split(" ");
+  const authorization = req.headers.authorization.split(" ");
 
   if (authorization.length !== 2)
     return res.send(400).send({ error: "Authorization needed" });

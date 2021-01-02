@@ -45,7 +45,7 @@ export class User {
   state: number;
 
   @Column({ nullable: true })
-  covidVaccineScore?: number;
+  covidVulnerabilityScore?: number;
 
   @OneToOne(() => PatientProfile)
   @JoinColumn()

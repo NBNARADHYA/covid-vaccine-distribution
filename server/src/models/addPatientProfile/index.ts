@@ -59,6 +59,9 @@ export const addPatientProfile = async ({
   try {
     await dbConnection.getRepository(PatientProfile).insert(patientProfile);
 
+    //  Call ML model here to get covidVulnerabilityScore
+    //  Then covidVulnerabilityScore is also updated in the following query
+
     await dbConnection
       .getRepository(User)
       .update({ email: user.email }, { patientProfile });

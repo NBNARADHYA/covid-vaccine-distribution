@@ -6,7 +6,7 @@ export const verifySuperUser = (
   next: NextFunction
 ): void | Response => {
   if (!req.user.isSuperUser)
-    return res.send(400).send({ error: "Not authorized" });
+    return res.status(400).send({ error: "Not authorized" });
 
   return next();
 };

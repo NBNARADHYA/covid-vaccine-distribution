@@ -5,7 +5,8 @@ export const verifyAdmin = (
   res: Response,
   next: NextFunction
 ): void | Response => {
-  if (!req.user.isAdmin) return res.send(400).send({ error: "Not authorized" });
+  if (!req.user.isAdmin)
+    return res.status(400).send({ error: "Not authorized" });
 
   return next();
 };
