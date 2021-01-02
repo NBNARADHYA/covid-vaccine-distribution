@@ -18,6 +18,12 @@ export class User {
   @Column()
   password: string;
 
-  @Column()
+  @Column({ default: false })
+  verified: boolean;
+
+  @Column({ default: false })
   isAdmin: boolean;
+
+  @Column({ nullable: true })
+  covidVaccineScore: number;
 }
