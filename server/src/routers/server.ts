@@ -5,6 +5,7 @@ import { refreshTokenRouter } from "./refreshToken";
 import { signUpRouter } from "./signUp";
 import { verifyEmailRouter } from "./verifyEmail";
 import { loginRouter } from "./login";
+import { addPatientProfileRouter } from "./addPatientProfile";
 
 export const server = express();
 
@@ -15,3 +16,4 @@ server.use("/signup", signUpRouter);
 server.use("/refresh_token", refreshTokenRouter);
 server.use("/verify_email", verifyEmailRouter);
 server.use("/login", loginRouter);
+server.use("/add_patient_profile", addPatientProfileRouter);

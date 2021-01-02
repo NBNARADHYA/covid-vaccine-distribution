@@ -15,7 +15,7 @@ const formatDate = (): string => {
 @Entity()
 export class PatientProfile {
   @PrimaryGeneratedColumn()
-  id: number;
+  id?: number;
 
   @Column()
   sex: 1 | 2;
