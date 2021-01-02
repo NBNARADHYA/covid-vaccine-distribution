@@ -7,7 +7,13 @@ export const signUpRouter = Router();
 signUpRouter.post(
   "/",
   async (req: Request, res: Response): Promise<Response> => {
-    const { email, firstName, lastName, password }: SignUpProps = req.body;
+    const {
+      email,
+      firstName,
+      lastName,
+      password,
+      state,
+    }: SignUpProps = req.body;
 
     const errors: string[] = [];
 
@@ -21,12 +27,16 @@ signUpRouter.post(
       errors.push("password requried");
     } else if (password.length < 5) errors.push("Invalid password");
 
+    if (!state) {
+      errors.push("state required");
+    } else if (isNaN(state)) errors.push("invalid state");
+
     if (errors.length) {
       return res.status(400).send({ errors });
     }
 
     try {
-      await signUp({ firstName, lastName, email, password });
+      await signUp({ firstName, lastName, email, password, state });
     } catch (error) {
       error = error.message;
       if (error.includes("duplicate key")) error = "User already exists";

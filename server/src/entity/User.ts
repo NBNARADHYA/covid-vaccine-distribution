@@ -1,4 +1,12 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { PatientProfile } from "./PatientProfile";
 
 @Entity()
 export class User {
@@ -9,21 +17,37 @@ export class User {
   @PrimaryColumn()
   email: string;
 
+  @Column({ nullable: true })
+  verifyEmailHash?: string;
+
   @Column()
   firstName: string;
 
   @Column({ nullable: true })
-  lastName: string;
+  lastName?: string;
 
   @Column()
   password: string;
 
   @Column({ default: false })
-  verified: boolean;
+  isVerified?: boolean;
 
   @Column({ default: false })
-  isAdmin: boolean;
+  isAdmin?: boolean;
+
+  @Column({ default: false })
+  isSuperUser?: boolean;
+
+  @Column({ default: false })
+  vaccinated?: boolean;
+
+  @Column()
+  state: number;
 
   @Column({ nullable: true })
-  covidVaccineScore: number;
+  covidVaccineScore?: number;
+
+  @OneToOne(() => PatientProfile)
+  @JoinColumn()
+  patientProfile?: PatientProfile;
 }
