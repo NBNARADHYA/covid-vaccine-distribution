@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import { refreshTokenRouter } from "./refreshToken";
 import { signUpRouter } from "./signUp";
 import { verifyEmailRouter } from "./verifyEmail";
+import { loginRouter } from "./login";
 
 export const server = express();
 
@@ -13,3 +14,4 @@ server.use(cookieParser());
 server.use("/signup", signUpRouter);
 server.use("/refresh_token", refreshTokenRouter);
 server.use("/verify_email", verifyEmailRouter);
+server.use("/login", loginRouter);
