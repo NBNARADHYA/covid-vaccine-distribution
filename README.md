@@ -76,3 +76,18 @@ upstream	https://github.com/NBNARADHYA/ey-techathon (push)
 2. Setup environmental variables according to `.example.env`
 3. Run `yarn install`
 4. Run `yarn start` to start the server
+
+### Setup `model`
+
+#### Pre-requisites
+
+1. Install `python3` on your device if not already by looking up the following docs([windows](https://www.python.org/downloads/windows/), [mac](https://www.python.org/downloads/mac-osx/), `ubuntu` comes pre-installed)
+2. Install `virtualenv` if not already by running `pip3 install virtualenv`
+
+#### Steps
+
+1. Run `cd model`
+2. Run `python3 -m venv venv` to create a virtual environment
+3. Activate `venv` by running `. venv/bin/activate`
+4. Run `pip3 install -r requirements.txt` to install packages
+5. Run `FLASK_APP=app.py flask run -h localhost -p 8000` to start the server
