@@ -37,6 +37,8 @@ export const login = async ({
     email,
     firstName: user.firstName,
     lastName: `${user.lastName}`,
+    isAdmin: !!user.isAdmin,
+    isSuperUser: !!user.isSuperUser,
   };
 
   const accessToken = createAccessToken(payload);

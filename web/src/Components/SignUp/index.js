@@ -7,15 +7,19 @@ import {
   Button,
   MenuItem,
   Snackbar,
+  FormControlLabel,
+  Checkbox,
 } from "@material-ui/core";
 import { Form, Formik, Field, ErrorMessage } from "formik";
 import { isEmail } from "../utils/isEmail";
 import { states } from "./states";
 import { ErrorAlert } from "../common/ErrorAlert";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Alert } from "@material-ui/lab";
 import { joinErrors } from "../utils/joinErrors";
+import { AccessTokenContext } from "../../Contexts/AccessToken";
+import jwtDecode from "jwt-decode";
 
 const useStyles = makeStyles((theme) => ({
   formContainer: {
@@ -52,6 +56,20 @@ const SignUp = ({ history }) => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
 
+  const { accessToken } = useContext(AccessTokenContext);
+
+  let isAdmin = false;
+
+  if (accessToken) {
+    const payload = jwtDecode(accessToken);
+    console.log(payload);
+    isAdmin = !!payload.isAdmin;
+    if (!isAdmin) {
+      history.push("/");
+      return null;
+    }
+  }
+
   if (success)
     return (
       <Snackbar
@@ -60,17 +78,21 @@ const SignUp = ({ history }) => {
         autoHideDuration={6000}
         onClose={() => {
           setSuccess(false);
-          history.push("/login");
+          history.push(`/${isAdmin ? `login` : `signup`}`);
         }}
       >
         <Alert
           onClose={() => {
             setSuccess(false);
-            history.push("/login");
+            history.push(`/${isAdmin ? `login` : `signup`}`);
           }}
           severity="success"
         >
-          Account created successfully! Verify your email !
+          {`${isAdmin && `Admin`} Account created successfully! ${
+            isAdmin
+              ? `Ask the new admin to verify his/her email`
+              : `Verify your email`
+          } !`}
         </Alert>
       </Snackbar>
     );
@@ -110,13 +132,18 @@ const SignUp = ({ history }) => {
           setSubmitting(true);
           console.log(values);
           try {
-            let res = await fetch(`${process.env.REACT_APP_SERVER}/signup`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(values),
-            });
+            let res = await fetch(
+              `${process.env.REACT_APP_SERVER}/${
+                isAdmin ? `signup_admin` : `signup`
+              }`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(values),
+              }
+            );
             res = await res.json();
             if (res.errors) {
               setError(joinErrors(res.errors));
@@ -173,20 +200,29 @@ const SignUp = ({ history }) => {
                 />
                 <ErrorMessage name="password" component={ErrorAlert} />
               </Grid>
-              <Grid item xs={5} alignFlex="flex-end">
-                <TextField
-                  select
-                  label="Loctation"
-                  value={values.state}
-                  onChange={handleChange("state")}
-                  fullWidth
-                >
-                  {states.map((state, idx) => (
-                    <MenuItem value={idx} key={idx}>
-                      {state}
-                    </MenuItem>
-                  ))}
-                </TextField>
+              <Grid item container xs={12} justify="flex-start">
+                <Grid item xs={6}>
+                  <FormControlLabel
+                    disabled
+                    control={<Checkbox checked />}
+                    label="Admin ?"
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    select
+                    label="Location"
+                    value={values.state}
+                    onChange={handleChange("state")}
+                    fullWidth
+                  >
+                    {states.map((state, idx) => (
+                      <MenuItem value={idx} key={idx}>
+                        {state}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
               </Grid>
               <Grid item xs={12}>
                 <Typography

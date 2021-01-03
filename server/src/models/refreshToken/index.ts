@@ -19,9 +19,11 @@ export const refreshToken = async (token: string): Promise<string> => {
     }
 
     return createAccessToken({
-      email: payload.email,
-      firstName: payload.firstName,
-      lastName: payload.lastName,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      isAdmin: user.isAdmin,
+      isSuperUser: user.isSuperUser,
     } as Payload);
   } catch (error) {
     throw new Error("INVALID_TOKEN");
