@@ -1,12 +1,12 @@
 import { createTransport } from "nodemailer";
 
 export interface EmailProps {
-  email: string;
+  to: string;
   html: string;
   subject: string;
 }
 
-export const sendMail = async ({ email, html, subject }: EmailProps) => {
+export const sendMail = async ({ to, html, subject }: EmailProps) => {
   const transporter = createTransport({
     service: "gmail",
     host: process.env.SMTP_HOST!,
@@ -18,7 +18,7 @@ export const sendMail = async ({ email, html, subject }: EmailProps) => {
 
   await transporter.sendMail({
     from: process.env.SMTP_USER!,
-    to: email,
+    to,
     html,
     subject,
   });

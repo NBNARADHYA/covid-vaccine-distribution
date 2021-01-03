@@ -1,8 +1,5 @@
 import { PatientProfile } from "../../entity/PatientProfile";
-
-const isDate = (date: Date): boolean =>
-  Object.prototype.toString.call(date) === "[object Date]" &&
-  !isNaN(date.getTime());
+import { isDate } from "../utils/isDate";
 
 export const validate = ({
   ageBand,

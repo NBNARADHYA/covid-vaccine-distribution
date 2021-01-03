@@ -39,7 +39,7 @@ export class User {
   isSuperUser?: boolean;
 
   @Column({ default: false })
-  vaccinated?: boolean;
+  isVaccinated?: boolean;
 
   @Column()
   state: number;
