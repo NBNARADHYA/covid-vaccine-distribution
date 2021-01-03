@@ -44,7 +44,7 @@ export class User {
   @Column()
   state: number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: "float8" })
   covidVulnerabilityScore?: number;
 
   @OneToOne(() => PatientProfile)

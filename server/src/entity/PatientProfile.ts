@@ -1,16 +1,16 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-const formatDate = (): string => {
-  const d = new Date();
-  let month = "" + (d.getMonth() + 1),
-    day = "" + d.getDate(),
-    year = d.getFullYear();
+// const formatDate = (): string => {
+//   const d = new Date();
+//   let month = "" + (d.getMonth() + 1),
+//     day = "" + d.getDate(),
+//     year = d.getFullYear();
 
-  if (month.length < 2) month = "0" + month;
-  if (day.length < 2) day = "0" + day;
+//   if (month.length < 2) month = "0" + month;
+//   if (day.length < 2) day = "0" + day;
 
-  return [day, month, year].join("-");
-};
+//   return [day, month, year].join("-");
+// };
 
 @Entity()
 export class PatientProfile {
@@ -23,17 +23,11 @@ export class PatientProfile {
   @Column()
   patientType: 1 | 2;
 
-  @Column({ default: formatDate() })
-  entryDate: string;
+  @Column()
+  dateEntry: string;
 
   @Column()
   dateSymptoms: string;
-
-  @Column({ default: "9999-99-99" })
-  dateDied: string;
-
-  @Column({ nullable: true })
-  deltaDate: number;
 
   @Column()
   intubed: 1 | 0;

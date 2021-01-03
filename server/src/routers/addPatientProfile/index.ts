@@ -14,7 +14,7 @@ addPatientProfileRouter.post(
     if (errors.length) return res.status(400).send({ errors });
 
     try {
-      await addPatientProfile(req.body);
+      await addPatientProfile({ ...req.body, user: req.user });
       return res.status(200).send({ success: true });
     } catch (error) {
       return res.status(500).send({ errors: [error.message] });
