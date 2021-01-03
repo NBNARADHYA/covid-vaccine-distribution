@@ -11,7 +11,7 @@ export const validate = ({
   contactOtherCovid,
   copd,
   dateSymptoms,
-  covidRes,
+  covidTestResult,
   dateDied,
   diabetes,
   hypertension,
@@ -34,7 +34,6 @@ export const validate = ({
 
   Object.entries({
     sex,
-    patientType,
     intubed,
     pneumonia,
     pregnancy,
@@ -51,17 +50,23 @@ export const validate = ({
     contactOtherCovid,
     icu,
   }).forEach(([field, value]) => {
-    if (!value) errors.push(`${field} required`);
-    else if (isNaN(value) || (value !== 1 && value !== 2))
+    if (value === undefined || value === null) errors.push(`${field} required`);
+    else if (isNaN(value) || (value !== 1 && value !== 0))
       errors.push(`Invalid ${field}`);
   });
 
-  if (!covidRes) errors.push("covidRes required");
+  if (covidTestResult === undefined || covidTestResult === null)
+    errors.push("covidTestResult required");
   else if (
-    isNaN(covidRes) ||
-    (covidRes !== 1 && covidRes !== 2 && covidRes !== 3)
+    isNaN(covidTestResult) ||
+    (covidTestResult !== 0 && covidTestResult !== 1 && covidTestResult !== 2)
   )
-    errors.push("Invalid covidRes");
+    errors.push("Invalid covidTestResult");
+
+  if (patientType === undefined && patientType === null)
+    errors.push(`patientType required`);
+  else if (isNaN(patientType) || (patientType !== 1 && patientType !== 2))
+    errors.push(`Invalid patientType`);
 
   if (!dateSymptoms) errors.push("dateSymptoms required");
   else if (!isDate(new Date(dateSymptoms))) errors.push("Invalid dateSymptoms");

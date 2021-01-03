@@ -18,7 +18,7 @@ export class PatientProfile {
   id?: number;
 
   @Column()
-  sex: 1 | 2;
+  sex: 1 | 0;
 
   @Column()
   patientType: 1 | 2;
@@ -36,53 +36,53 @@ export class PatientProfile {
   deltaDate: number;
 
   @Column()
-  intubed: 1 | 2;
+  intubed: 1 | 0;
 
   @Column()
-  pneumonia: 1 | 2;
+  pneumonia: 1 | 0;
 
   @Column()
   ageBand: number;
 
   @Column()
-  pregnancy: 1 | 2;
+  pregnancy: 1 | 0;
 
   @Column()
-  diabetes: 1 | 2;
+  diabetes: 1 | 0;
 
   @Column()
-  copd: 1 | 2;
+  copd: 1 | 0;
 
   @Column()
-  asthma: 1 | 2;
+  asthma: 1 | 0;
 
   @Column()
-  inmsupr: 1 | 2;
+  inmsupr: 1 | 0;
 
   @Column()
-  hypertension: 1 | 2;
+  hypertension: 1 | 0;
 
   @Column()
-  otherDisease: 1 | 2;
+  otherDisease: 1 | 0;
 
   @Column()
-  cardiovascular: 1 | 2;
+  cardiovascular: 1 | 0;
 
   @Column()
-  obesity: 1 | 2;
+  obesity: 1 | 0;
 
   @Column()
-  renalChronic: 1 | 2;
+  renalChronic: 1 | 0;
 
   @Column()
-  tobacco: 1 | 2;
+  tobacco: 1 | 0;
 
   @Column()
-  contactOtherCovid: 1 | 2;
+  contactOtherCovid: 1 | 0;
 
   @Column({ nullable: true })
-  covidRes: 1 | 2 | 3;
+  covidTestResult: 0 | 1 | 2;
 
   @Column()
-  icu: 1 | 2;
+  icu: 1 | 0;
 }

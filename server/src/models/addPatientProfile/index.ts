@@ -13,7 +13,7 @@ export const addPatientProfile = async ({
   contactOtherCovid,
   copd,
   dateSymptoms,
-  covidRes,
+  covidTestResult,
   dateDied,
   diabetes,
   hypertension,
@@ -40,7 +40,7 @@ export const addPatientProfile = async ({
   patientProfile.contactOtherCovid = contactOtherCovid;
   patientProfile.copd = copd;
   patientProfile.dateSymptoms = dateSymptoms;
-  patientProfile.covidRes = covidRes;
+  patientProfile.covidTestResult = covidTestResult;
   patientProfile.dateDied = dateDied;
   patientProfile.diabetes = diabetes;
   patientProfile.hypertension = hypertension;
