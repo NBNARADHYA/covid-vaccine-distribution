@@ -67,3 +67,12 @@ upstream	https://github.com/NBNARADHYA/ey-techathon (push)
 2. Setup environmental variables according to `.example.env`
 3. Run `yarn install`
 4. Run `yarn run dev` to start the server
+
+### Setup `web`
+
+#### Steps
+
+1. Run `cd web`
+2. Setup environmental variables according to `.example.env`
+3. Run `yarn install`
+4. Run `yarn start` to start the server

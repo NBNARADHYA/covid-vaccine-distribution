@@ -7,10 +7,19 @@ import { verifyEmailRouter } from "./verifyEmail";
 import { loginRouter } from "./login";
 import { addPatientProfileRouter } from "./addPatientProfile";
 import { signUpAdminRouter } from "./signUpAdmin";
+import cors from "cors";
 
 export const server = express();
 
+server.use(
+  cors({
+    credentials: true,
+    origin: `${process.env.WEB}`,
+  })
+);
+
 server.use(bodyParser.urlencoded({ extended: false }));
+server.use(bodyParser.json());
 server.use(cookieParser());
 
 server.use("/signup", signUpRouter);
