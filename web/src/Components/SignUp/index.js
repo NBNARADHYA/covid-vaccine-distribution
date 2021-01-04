@@ -19,7 +19,6 @@ import { useContext, useState } from "react";
 import { Alert } from "@material-ui/lab";
 import { joinErrors } from "../utils/joinErrors";
 import { AccessTokenContext } from "../../Contexts/AccessToken";
-import jwtDecode from "jwt-decode";
 
 const useStyles = makeStyles((theme) => ({
   formContainer: {
@@ -50,24 +49,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SignUp = ({ history }) => {
+export const SignUp = ({ history }) => {
   const classes = useStyles();
   const [errOpen, setErrOpen] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const {
+    accessToken,
+    user: { isAdmin },
+  } = useContext(AccessTokenContext);
 
-  const { accessToken } = useContext(AccessTokenContext);
-
-  let isAdmin = false;
-
-  if (accessToken) {
-    const payload = jwtDecode(accessToken);
-    console.log(payload);
-    isAdmin = !!payload.isAdmin;
-    if (!isAdmin) {
-      history.push("/");
-      return null;
-    }
+  if (accessToken && !isAdmin) {
+    history.push("/");
+    return null;
   }
 
   if (success)
@@ -78,17 +72,17 @@ const SignUp = ({ history }) => {
         autoHideDuration={6000}
         onClose={() => {
           setSuccess(false);
-          history.push(`/${isAdmin ? `login` : `signup`}`);
+          history.push(`/${isAdmin ? `signup` : `login`}`);
         }}
       >
         <Alert
           onClose={() => {
             setSuccess(false);
-            history.push(`/${isAdmin ? `login` : `signup`}`);
+            history.push(`/${isAdmin ? `signup` : `login`}`);
           }}
           severity="success"
         >
-          {`${isAdmin && `Admin`} Account created successfully! ${
+          {`${isAdmin ? `Admin` : ``} Account created successfully! ${
             isAdmin
               ? `Ask the new admin to verify his/her email`
               : `Verify your email`
@@ -114,7 +108,7 @@ const SignUp = ({ history }) => {
           lastName: "",
           state: "",
         }}
-        validate={({ email, password, firstName }) => {
+        validate={({ email, password, firstName, state }) => {
           const errors = {};
           if (!email) {
             errors.email = "Email required";
@@ -126,11 +120,12 @@ const SignUp = ({ history }) => {
           else if (password.length < 5)
             errors.password = "Password should be min. 5 characters long";
 
+          if (state === "") errors.state = "Location required";
+
           return errors;
         }}
         onSubmit={async (values, { setSubmitting }) => {
           setSubmitting(true);
-          console.log(values);
           try {
             let res = await fetch(
               `${process.env.REACT_APP_SERVER}/${
@@ -201,13 +196,15 @@ const SignUp = ({ history }) => {
                 <ErrorMessage name="password" component={ErrorAlert} />
               </Grid>
               <Grid item container xs={12} justify="flex-start">
-                <Grid item xs={6}>
-                  <FormControlLabel
-                    disabled
-                    control={<Checkbox checked />}
-                    label="Admin ?"
-                  />
-                </Grid>
+                {isAdmin && (
+                  <Grid item xs={6}>
+                    <FormControlLabel
+                      disabled
+                      control={<Checkbox checked />}
+                      label="Admin ?"
+                    />
+                  </Grid>
+                )}
                 <Grid item xs={6}>
                   <TextField
                     select
@@ -263,5 +260,3 @@ const SignUp = ({ history }) => {
     </Container>
   );
 };
-
-export default SignUp;

@@ -12,7 +12,7 @@ export const refreshToken = async (token: string): Promise<string> => {
 
     const user = await dbConnection
       .getRepository(User)
-      .findOne({ where: { email: payload.email } });
+      .findOne({ email: payload.email, isVerified: true });
 
     if (!user) {
       throw new Error("INVALID_USER");
@@ -22,8 +22,11 @@ export const refreshToken = async (token: string): Promise<string> => {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
-      isAdmin: user.isAdmin,
-      isSuperUser: user.isSuperUser,
+      isAdmin: !!user.isAdmin,
+      isSuperUser: !!user.isSuperUser,
+      isRegisteredForVaccination:
+        user.covidVulnerabilityScore !== null &&
+        user.covidVulnerabilityScore !== undefined,
     } as Payload);
   } catch (error) {
     throw new Error("INVALID_TOKEN");

@@ -1,6 +1,8 @@
 import { Redirect, Route, Switch } from "react-router-dom";
-import Login from "./Login";
-import SignUp from "./SignUp/";
+import { Home } from "./Home";
+import { Login } from "./Login";
+import { RegisterForVaccination } from "./RegisterForVaccination";
+import { SignUp } from "./SignUp/";
 
 const Routes = () => (
   <div
@@ -10,9 +12,15 @@ const Routes = () => (
     }}
   >
     <Switch>
-      <Route path="/signup" component={SignUp} />
-      <Route path="/login" component={Login} />
-      <Redirect to="/login" />
+      <Route exact path="/" component={Home} />
+      <Route exact path="/signup" component={SignUp} />
+      <Route exact path="/login" component={Login} />
+      <Route
+        exact
+        path="/register_for_covid_vaccine"
+        component={RegisterForVaccination}
+      />
+      <Redirect to="/register_for_covid_vaccine" />
     </Switch>
   </div>
 );

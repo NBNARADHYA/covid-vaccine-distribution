@@ -60,7 +60,7 @@ export const validate = ({
   )
     errors.push("Invalid covidTestResult");
 
-  if (patientType === undefined && patientType === null)
+  if (patientType === undefined || patientType === null)
     errors.push(`patientType required`);
   else if (isNaN(patientType) || (patientType != 1 && patientType != 2))
     errors.push(`Invalid patientType`);

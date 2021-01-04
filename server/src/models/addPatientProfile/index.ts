@@ -47,7 +47,7 @@ export const addPatientProfile = async ({
   patientProfile.cardiovascular = cardiovascular;
   patientProfile.contactOtherCovid = contactOtherCovid;
   patientProfile.copd = copd;
-  patientProfile.dateSymptoms = dateSymptoms;
+  patientProfile.dateSymptoms = new Date(dateSymptoms).toISOString();
   patientProfile.covidTestResult = covidTestResult;
   patientProfile.diabetes = diabetes;
   patientProfile.hypertension = hypertension;
@@ -111,7 +111,6 @@ export const addPatientProfile = async ({
 
     return true;
   } catch (error) {
-    console.log(error);
     throw new Error("Internal Server error");
   }
 };

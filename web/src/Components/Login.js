@@ -46,12 +46,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Login = ({ history }) => {
+export const Login = ({ history }) => {
   const classes = useStyles();
   const [errOpen, setErrOpen] = useState(false);
   const [error, setError] = useState(null);
 
-  const { setAccessToken } = useContext(AccessTokenContext);
+  const { setAccessToken, accessToken } = useContext(AccessTokenContext);
+
+  if (accessToken) history.push("/");
 
   return (
     <Container className={classes.formContainer}>
@@ -98,7 +100,6 @@ const Login = ({ history }) => {
               setErrOpen(true);
             } else {
               setAccessToken(res.accessToken);
-              localStorage.setItem("accessToken", res.accessToken);
               history.push("/");
             }
           } catch (error) {
@@ -172,5 +173,3 @@ const Login = ({ history }) => {
     </Container>
   );
 };
-
-export default Login;

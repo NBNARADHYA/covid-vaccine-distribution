@@ -39,6 +39,9 @@ export const login = async ({
     lastName: `${user.lastName}`,
     isAdmin: !!user.isAdmin,
     isSuperUser: !!user.isSuperUser,
+    isRegisteredForVaccination:
+      user.covidVulnerabilityScore !== null &&
+      user.covidVulnerabilityScore !== undefined,
   };
 
   const accessToken = createAccessToken(payload);

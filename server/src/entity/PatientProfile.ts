@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "./User";
 
 // const formatDate = (): string => {
 //   const d = new Date();
@@ -79,4 +80,10 @@ export class PatientProfile {
 
   @Column()
   icu: 1 | 0;
+
+  @OneToOne(() => User, (user) => user.patientProfile, {
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  })
+  user: User;
 }

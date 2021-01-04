@@ -47,7 +47,7 @@ export class User {
   @Column({ nullable: true, type: "float8" })
   covidVulnerabilityScore?: number;
 
-  @OneToOne(() => PatientProfile)
+  @OneToOne(() => PatientProfile, (patientProfile) => patientProfile.user)
   @JoinColumn()
   patientProfile?: PatientProfile;
 }
