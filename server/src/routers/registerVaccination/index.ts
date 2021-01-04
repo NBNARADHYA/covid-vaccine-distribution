@@ -21,7 +21,10 @@ registerVaccinationRouter.post(
 
     if (!dateOfVaccination) {
       errors.push("dateOfVaccination required");
-    } else if (!isDate(new Date(dateOfVaccination)))
+    } else if (
+      !isDate(new Date(dateOfVaccination)) ||
+      new Date(dateOfVaccination).getTime() <= Date.now()
+    )
       errors.push("Invalid dateOfVaccination");
 
     try {

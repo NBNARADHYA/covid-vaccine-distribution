@@ -1,4 +1,6 @@
 import { Redirect, Route, Switch } from "react-router-dom";
+import { Admin } from "./admin";
+import { Header } from "./common/Header";
 import { Home } from "./Home";
 import { Login } from "./Login";
 import { RegisterForVaccination } from "./RegisterForVaccination";
@@ -11,6 +13,7 @@ const Routes = () => (
       position: "relative",
     }}
   >
+    <Header />
     <Switch>
       <Route exact path="/" component={Home} />
       <Route exact path="/signup" component={SignUp} />
@@ -20,6 +23,7 @@ const Routes = () => (
         path="/register_for_covid_vaccine"
         component={RegisterForVaccination}
       />
+      <Route path="/admin" component={Admin} />
       <Redirect to="/register_for_covid_vaccine" />
     </Switch>
   </div>

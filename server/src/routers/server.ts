@@ -9,6 +9,7 @@ import { addPatientProfileRouter } from "./addPatientProfile";
 import { signUpAdminRouter } from "./signUpAdmin";
 import cors from "cors";
 import { registerVaccinationRouter } from "./registerVaccination";
+import { logoutRouter } from "./logout";
 
 export const server = express();
 
@@ -30,3 +31,4 @@ server.use("/login", loginRouter);
 server.use("/add_patient_profile", addPatientProfileRouter);
 server.use("/signup_admin", signUpAdminRouter);
 server.use("/register_vaccination", registerVaccinationRouter);
+server.use("/logout", logoutRouter);

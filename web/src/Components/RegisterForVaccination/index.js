@@ -74,7 +74,7 @@ export const RegisterForVaccination = ({ history }) => {
 
   if (accessToken) {
     if (isAdmin) {
-      history.push("/");
+      history.push("/admin");
       return null;
     }
   } else history.push("/login");
@@ -318,6 +318,7 @@ export const RegisterForVaccination = ({ history }) => {
                       onChange={(val) => setFieldValue("dateSymptoms", val)}
                     />
                   </MuiPickersUtilsProvider>
+                  <ErrorMessage name="dateSymptoms" component={ErrorAlert} />
                 </Grid>
                 <Grid item xs={12}>
                   <Button
