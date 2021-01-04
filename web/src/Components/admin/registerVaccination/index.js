@@ -82,7 +82,7 @@ export const RegisterPatientsForVaccination = ({ history }) => {
           severity="success"
         >
           Vaccination registered for the most vulnerable patients according to
-          the scores calculated by the Deep Learning model!
+          the priority list!
         </Alert>
       </Snackbar>
     );

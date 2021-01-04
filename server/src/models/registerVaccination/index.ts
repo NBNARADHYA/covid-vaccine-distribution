@@ -16,26 +16,46 @@ export const registerVaccination = async ({
   const dbConnection = getConnection();
 
   try {
-    const patients = await dbConnection.getRepository(User).find({
-      where: { state: adminLocation, isVaccinated: false },
-      order: { covidVulnerabilityScore: "DESC" },
-      take: numVaccines,
-    });
+    const userQb = dbConnection.getRepository(User).createQueryBuilder();
+
+    const subQuery = userQb
+      .subQuery()
+      .select(`user.id`)
+      .from(User, "user")
+      .where(`user.state = :state`, { state: adminLocation })
+      .andWhere(`user.isVaccinated = :isVaccinated`, {
+        isVaccinated: false,
+      })
+      .andWhere(`user.vaccinationDate IS NULL`)
+      .andWhere(`user.isAdmin = :isAdmin`, { isAdmin: false })
+      .orderBy(`covidVulnerabilityScore`, "DESC")
+      .take(numVaccines)
+      .getQuery();
+
+    const result = await userQb
+      .update()
+      .set({ vaccinationDate: new Date(dateOfVaccination).toDateString() })
+      .where(`id IN ${subQuery}`)
+      .returning("email")
+      .execute();
+
+    const patients: { email: string }[] = result.raw;
 
     const recipientEmails: string = patients
       .map((patient) => patient.email)
       .join(",");
 
-    await sendMail({
+    sendMail({
       to: recipientEmails,
       subject: "Covid Vaccination schedule",
-      html: `<div>Hi ! Your covid vaccination has been scheduled on 
+      html: `<div>Hi ! Your covid vaccination has been scheduled on
                 ${new Date(dateOfVaccination).toDateString()}
             </div>`,
     });
 
     return true;
   } catch (error) {
+    console.log(error);
     throw new Error("Internal server error");
   }
 };

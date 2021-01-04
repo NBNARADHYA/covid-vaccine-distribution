@@ -1,4 +1,4 @@
-export const isTokenExpired = (exp) => Date.now() < exp * 1000 + 3000;
+export const isTokenExpired = (exp) => Date.now() > exp * 1000 + 3000;
 
 export const refreshToken = async (setAccessToken) => {
   try {

@@ -5,6 +5,7 @@ import { Home } from "./Home";
 import { Login } from "./Login";
 import { RegisterForVaccination } from "./RegisterForVaccination";
 import { SignUp } from "./SignUp/";
+import { VerifyEmail } from "./VerifyEmail";
 
 const Routes = () => (
   <div
@@ -23,6 +24,7 @@ const Routes = () => (
         path="/register_for_covid_vaccine"
         component={RegisterForVaccination}
       />
+      <Route exact path="/verify_email" component={VerifyEmail} />
       <Route path="/admin" component={Admin} />
       <Redirect to="/register_for_covid_vaccine" />
     </Switch>

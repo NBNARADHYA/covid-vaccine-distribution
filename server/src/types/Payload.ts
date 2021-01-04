@@ -4,5 +4,6 @@ export interface Payload {
   lastName: string;
   isAdmin: boolean;
   isSuperUser: boolean;
-  isRegisteredForVaccination: boolean;
+  isProfileAdded: boolean;
+  vaccinationDate?: string;
 }

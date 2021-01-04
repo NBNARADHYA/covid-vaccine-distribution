@@ -41,6 +41,9 @@ export class User {
   @Column({ default: false })
   isVaccinated?: boolean;
 
+  @Column({ nullable: true })
+  vaccinationDate?: string;
+
   @Column()
   state: number;
 

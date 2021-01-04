@@ -24,9 +24,10 @@ export const refreshToken = async (token: string): Promise<string> => {
       lastName: user.lastName,
       isAdmin: !!user.isAdmin,
       isSuperUser: !!user.isSuperUser,
-      isRegisteredForVaccination:
+      isProfileAdded:
         user.covidVulnerabilityScore !== null &&
         user.covidVulnerabilityScore !== undefined,
+      vaccinationDate: user.vaccinationDate,
     } as Payload);
   } catch (error) {
     throw new Error("INVALID_TOKEN");

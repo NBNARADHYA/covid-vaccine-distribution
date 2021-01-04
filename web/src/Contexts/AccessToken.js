@@ -9,7 +9,7 @@ const initialPayload = initialAccessToken
   : {
       isAdmin: false,
       isSuperUser: false,
-      isRegisteredForVaccination: false,
+      isProfileAdded: false,
       exp: Date.now() - 1000,
     };
 

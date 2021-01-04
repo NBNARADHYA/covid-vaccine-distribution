@@ -67,10 +67,10 @@ export const RegisterForVaccination = ({ history }) => {
   const [error, setError] = useState(null);
   const {
     accessToken,
-    user: { isAdmin, isRegisteredForVaccination, exp },
+    user: { isAdmin, isProfileAdded, exp },
     setAccessToken,
   } = useContext(AccessTokenContext);
-  const [success, setSuccess] = useState(isRegisteredForVaccination);
+  const [success, setSuccess] = useState(isProfileAdded);
 
   if (accessToken) {
     if (isAdmin) {
