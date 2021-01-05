@@ -11,11 +11,11 @@ export const refreshToken = async (setAccessToken) => {
     );
     if (error) {
       console.error(error);
-      setAccessToken(undefined);
+      setAccessToken && setAccessToken(undefined);
       return false;
     } else {
-      setAccessToken(accessToken);
-      return true;
+      setAccessToken && setAccessToken(accessToken);
+      return accessToken;
     }
   } catch (error) {
     return { error };

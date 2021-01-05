@@ -9,14 +9,16 @@ refreshTokenRouter.post(
     const token: string = req.cookies.jid;
 
     if (!token) {
-      return res.send({ error: "TOKEN_REQUIRED", accessToken: null });
+      return res
+        .status(400)
+        .send({ error: "TOKEN_REQUIRED", accessToken: null });
     }
 
     try {
       const accessToken = await refreshToken(token);
       return res.send({ error: null, accessToken });
     } catch (error) {
-      return res.send({ error: error.message, accessToken: null });
+      return res.status(400).send({ error: error.message, accessToken: null });
     }
   }
 );

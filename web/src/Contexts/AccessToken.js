@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import jwtDecode from "jwt-decode";
+import { refreshToken } from "../Components/utils/refreshToken";
 
 const AccessTokenContext = createContext();
 
@@ -11,6 +12,7 @@ const initialPayload = initialAccessToken
       isSuperUser: false,
       isProfileAdded: false,
       exp: Date.now() - 1000,
+      vaccinationDate: null,
     };
 
 const AccessTokenProvider = ({ children }) => {
@@ -27,8 +29,16 @@ const AccessTokenProvider = ({ children }) => {
     }
   }, [accessToken]);
 
+  useEffect(() => {
+    refreshToken()
+      .then((res) => res && setAccessToken(res))
+      .catch(console.error);
+  }, [user]);
+
   return (
-    <AccessTokenContext.Provider value={{ accessToken, setAccessToken, user }}>
+    <AccessTokenContext.Provider
+      value={{ accessToken, setAccessToken, user, setUser }}
+    >
       {children}
     </AccessTokenContext.Provider>
   );

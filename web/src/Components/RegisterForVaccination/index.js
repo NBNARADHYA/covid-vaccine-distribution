@@ -69,6 +69,7 @@ export const RegisterForVaccination = ({ history }) => {
     accessToken,
     user: { isAdmin, isProfileAdded, exp },
     setAccessToken,
+    setUser,
   } = useContext(AccessTokenContext);
   const [success, setSuccess] = useState(isProfileAdded);
 
@@ -165,7 +166,10 @@ export const RegisterForVaccination = ({ history }) => {
               } else if (res.error) {
                 setError(res.error);
                 setErrOpen(true);
-              } else setSuccess(true);
+              } else {
+                setUser((prev) => ({ ...prev, isProfileAdded: true }));
+                setSuccess(true);
+              }
             } catch (error) {
               setError(error);
               setErrOpen(true);
