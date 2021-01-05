@@ -214,23 +214,23 @@ export const RegisterForVaccination = ({ history }) => {
                   <ErrorMessage name="sex" component={ErrorAlert} />
                 </Grid>
                 {Object.entries({
-                  intubed: "Are you intubed ?",
+                  icu: "Are you in ICU ?",
+                  contactOtherCovid:
+                    "Have you had contact with other covid positive folks ?",
+                  intubed: "Are you currently intubed ?",
                   pneumonia: "Do you have pneumonia ?",
-                  pregnancy: "Are your pregnant ?",
                   diabetes: "Do you have diabetes",
                   copd:
                     "Do you have COPD (Chronic obstructive pulmonary disease) ?",
                   asthma: "Do you have Asthma ?",
                   inmsupr: "Do you have Immunosuppression ?",
                   hypertension: "Do you have Hyper-tension ?",
-                  otherDisease: "Do you have any other disease ?",
                   cardiovascular: "Do you have any cardio vascular problems ?",
                   obesity: "Are you obese ?",
                   renalChronic: "Do you have Chronic kidney disease",
+                  otherDisease: "Do you have any other disease ?",
+                  pregnancy: "Are your pregnant ?",
                   tobacco: "Do you consume tobacco ?",
-                  contactOtherCovid:
-                    "Have you had contact with other covid positive folks ?",
-                  icu: "Are you in ICU ?",
                 }).map(([field, message], idx) => (
                   <Grid item xs={12} key={idx}>
                     <FormControl>
