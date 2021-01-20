@@ -46,6 +46,9 @@ export class User {
   vaccinationDate?: string;
 
   @Column({ nullable: true })
+  vaccinationTimeSlot?: string;
+
+  @Column({ nullable: true })
   adminEmail?: string;
 
   @Column("geography")

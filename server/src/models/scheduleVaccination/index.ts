@@ -1,47 +1,98 @@
 import { getConnection } from "typeorm";
 import { User } from "../../entity/User";
+import { timeSlots } from "./timeSlots";
 import { sendMail } from "../utils/sendMail";
 
+const getTimeSlot = (patientsPerSlot: number, idx: number): string =>
+  timeSlots[Math.floor(idx / patientsPerSlot) % timeSlots.length]!;
+
+const getVaccinationDate = (
+  patientsPerSlot: number,
+  idx: number,
+  prevDate: Date
+): string => {
+  const numDays = Math.floor(
+    Math.floor(idx / patientsPerSlot) / timeSlots.length
+  );
+  prevDate.setDate(prevDate.getDate() + numDays);
+  return prevDate.toDateString();
+};
+
 export const scheduleVaccination = async (
-  adminId: number
+  adminEmail: string,
+  patientsPerSlot: number
 ): Promise<boolean> => {
   const dbConnection = getConnection();
 
   try {
-    const userQb = dbConnection.getRepository(User).createQueryBuilder();
+    // Get patients who are registered under this vaccination center
+    // in descending order of covidVulnerabilityScore
+    const registeredPatients: {
+      email: string;
+      vaccinationDate: string;
+    }[] = await dbConnection
+      .getRepository(User)
+      .createQueryBuilder()
+      .select([`email`, `"vaccinationDate"`])
+      .where(`"adminEmail" = :adminEmail`, { adminEmail })
+      .andWhere(`"isVaccinated" = false`)
+      .andWhere(`"vaccinationTimeSlot" IS NULL`)
+      .orderBy(`"covidVulnerabilityScore"`, "DESC")
+      .getRawMany();
 
-    // const subQuery = userQb
-    //   .subQuery()
-    //   .select(`user.id`)
-    //   .from(User, "user")
-    //   .where(`user.state = :state`, { state: adminLocation })
-    //   .andWhere(`user.isVaccinated = :isVaccinated`, {
-    //     isVaccinated: false,
-    //   })
-    //   .andWhere(`user.vaccinationDate IS NULL`)
-    //   .andWhere(`user.isAdmin = :isAdmin`, { isAdmin: false })
-    //   .orderBy(`covidVulnerabilityScore`, "DESC")
-    //   .take(numVaccines)
-    //   .getQuery();
+    if (!registeredPatients.length) return true;
 
-    const result = await userQb
+    // Compute the time slot of the patients according to patientsPerSlot
+    // Also, new vaccinationDate if it has changed
+    const registeredPatientsDetails: {
+      email: string;
+      vaccinationDate: string;
+      vaccinationTimeSlot: string;
+    }[] = registeredPatients.map(({ email, vaccinationDate }, idx) => ({
+      email,
+      vaccinationDate: getVaccinationDate(
+        patientsPerSlot,
+        idx,
+        new Date(vaccinationDate)
+      ),
+      vaccinationTimeSlot: getTimeSlot(patientsPerSlot, idx),
+    }));
+
+    // Update the patients' entries with the new values computed
+    await dbConnection
+      .getRepository(User)
+      .createQueryBuilder()
       .update()
-      .set({ adminEmail: undefined })
-      .where(`adminId = :adminId`, { adminId })
-      .returning(["email", "dateOfVaccination"])
+      .set({
+        vaccinationDate: () => `"patientList"."vaccinationDate"`,
+        vaccinationTimeSlot: () =>
+          `"patientList"."vaccinationTimeSlot" FROM (VALUES ${registeredPatientsDetails
+            .map(
+              ({ email, vaccinationDate, vaccinationTimeSlot }) =>
+                `('${vaccinationTimeSlot}', '${email}', '${vaccinationDate}')`
+            )
+            .join(
+              `,`
+            )}) AS "patientList"("vaccinationTimeSlot", "email", "vaccinationDate")`,
+      })
+      .where(`"user"."email" = "patientList"."email"`)
       .execute();
 
-    const patients: { email: string; dateOfVaccination: string }[] = result.raw;
-
-    patients.forEach((patient) => {
-      sendMail({
-        to: patient.email,
-        subject: "Covid Vaccination schedule",
-        html: `<div>Hi ! Your covid vaccination has been scheduled on
-                    ${new Date(patient.dateOfVaccination).toDateString()}
-                </div>`,
-      });
-    });
+    // Send mail to each patient about their
+    // date and time slot of vaccination
+    registeredPatientsDetails.forEach(
+      ({ email, vaccinationDate, vaccinationTimeSlot }) => {
+        sendMail({
+          to: email,
+          subject: "Covid Vaccination schedule",
+          html: `<div>Hi ! Your covid vaccination has been scheduled on
+                <b>${new Date(
+                  vaccinationDate
+                ).toDateString()}</b> in the time slot <b>${vaccinationTimeSlot}</b>
+              </div>`,
+        });
+      }
+    );
 
     return true;
   } catch (error) {

@@ -51,8 +51,6 @@ export const registerAndDispatchVaccines = async (
       [JSON.stringify(suLocation), true, false, false, false, numVaccines]
     );
 
-    console.log(patients);
-
     if (!patients.length) return true;
 
     // Update patients' entries to include their vaccination center email and date of vaccination
@@ -80,30 +78,40 @@ export const registerAndDispatchVaccines = async (
     // Notify vaccination centers about the patients who have been registered vaccines
     // asking the admin to schedule vaccination
     // for those patients
-    const admins: { [key: string]: string[] } = {};
+    const admins: {
+      [key: string]: { deliveryDate: string; patients: string[] };
+    } = {};
 
-    patients.forEach(({ adminEmail, patientEmail }) => {
-      admins[adminEmail]?.push(patientEmail);
+    patients.forEach(({ adminEmail, patientEmail, adminSUDist }) => {
+      if (admins[adminEmail]) {
+        admins[adminEmail]!.patients.push(patientEmail);
+      }
 
-      if (!admins[adminEmail]) admins[adminEmail] = [patientEmail];
+      if (!admins[adminEmail])
+        admins[adminEmail] = {
+          deliveryDate: getVaccinationDate(adminSUDist),
+          patients: [patientEmail],
+        };
     });
 
-    Object.entries(admins).forEach(([adminEmail, patients]) => {
-      sendMail({
-        to: adminEmail,
-        subject: `Covid vaccine delivery`,
-        html: `<p>
+    Object.entries(admins).forEach(
+      ([adminEmail, { deliveryDate, patients }]) => {
+        sendMail({
+          to: adminEmail,
+          subject: `Covid vaccine delivery`,
+          html: `<p>
                 <div>Hello!, We have dispatched Covid vaccines to your center for the following patients.</div>
                 <ol>
                   ${patients.map((patient) => `<li>${patient}</li>`)}
                 </ol>
-                <div>The vaccines are going to arrive on </div>
+                <div>The vaccines are going to arrive on ${deliveryDate}</div>
                 <div><a href="${
                   process.env.WEB
                 }/schedule_vaccination">Click here</a> to schedule vaccination for the above patients</div>
               </p>`,
-      });
-    });
+        });
+      }
+    );
 
     return true;
   } catch (error) {
