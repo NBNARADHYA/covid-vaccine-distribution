@@ -5,7 +5,8 @@ export const validate = ({
   email,
   firstName,
   password,
-  state,
+  lat,
+  lng,
 }: SignUpProps): string[] => {
   const errors: string[] = [];
 
@@ -19,9 +20,13 @@ export const validate = ({
     errors.push("password requried");
   } else if (password.length < 5) errors.push("Invalid password");
 
-  if (!state) {
-    errors.push("state required");
-  } else if (isNaN(state)) errors.push("invalid state");
+  if (!lat) {
+    errors.push("lat required");
+  } else if (isNaN(lat)) errors.push("invalid lat");
+
+  if (!lng) {
+    errors.push("lng required");
+  } else if (isNaN(lng)) errors.push("invalid lng");
 
   return errors;
 };

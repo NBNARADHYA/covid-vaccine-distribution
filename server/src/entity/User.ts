@@ -1,3 +1,4 @@
+import { Point } from "geojson";
 import {
   Column,
   Entity,
@@ -44,8 +45,11 @@ export class User {
   @Column({ nullable: true })
   vaccinationDate?: string;
 
-  @Column()
-  state: number;
+  @Column({ nullable: true })
+  adminEmail?: string;
+
+  @Column("geography")
+  location: Point;
 
   @Column({ nullable: true, type: "float8" })
   covidVulnerabilityScore?: number;

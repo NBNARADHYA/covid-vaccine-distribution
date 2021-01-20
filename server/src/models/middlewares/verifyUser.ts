@@ -15,7 +15,7 @@ export const verifyUser = async (
   const authorization = req.headers.authorization.split(" ");
 
   if (authorization.length !== 2)
-    return res.send(400).send({ error: "Authorization needed" });
+    return res.status(400).send({ error: "Authorization needed" });
 
   const token = authorization[1];
 

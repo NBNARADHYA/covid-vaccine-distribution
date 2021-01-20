@@ -9,7 +9,8 @@ export interface SignUpProps {
   lastName?: string;
   email: string;
   password: string;
-  state: number;
+  lat: number;
+  lng: number;
 }
 
 export const signUp = async ({
@@ -17,7 +18,8 @@ export const signUp = async ({
   lastName,
   email,
   password,
-  state,
+  lat,
+  lng,
 }: SignUpProps): Promise<boolean> => {
   const dbConnection = getConnection();
 
@@ -30,7 +32,10 @@ export const signUp = async ({
   if (lastName) user.lastName = lastName;
   user.email = email;
   user.password = hashedPassword;
-  user.state = state;
+  user.location = {
+    type: "Point",
+    coordinates: [lat, lng],
+  };
   user.verifyEmailHash = verifyEmailHash;
 
   try {

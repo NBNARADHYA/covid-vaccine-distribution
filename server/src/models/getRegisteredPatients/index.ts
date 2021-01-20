@@ -10,7 +10,7 @@ interface PatientDetail {
 }
 
 export const getRegisteredPatients = async (
-  adminState: number
+  adminId: number
 ): Promise<PatientDetail[]> => {
   const dbConnection = getConnection();
 
@@ -18,7 +18,7 @@ export const getRegisteredPatients = async (
     const patientsData = await dbConnection
       .getRepository(User)
       .createQueryBuilder("user")
-      .where(`state = :adminState`, { adminState })
+      .where(`user.adminId = :adminId`, { adminId })
       .andWhere(`user.vaccinationDate IS NOT NULL`)
       .orderBy(`user.vaccinationDate`, "ASC")
       .orderBy(`user.covidVulnerabilityScore`, "DESC")
