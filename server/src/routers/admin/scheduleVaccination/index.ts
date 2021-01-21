@@ -1,14 +1,10 @@
 import { Request, Response, Router } from "express";
-import { verifyAdmin } from "../../models/middlewares/verifyAdmin";
-import { verifyUser } from "../../models/middlewares/verifyUser";
-import { scheduleVaccination } from "../../models/scheduleVaccination";
+import { scheduleVaccination } from "../../../models/admin/scheduleVaccination";
 
 export const scheduleVaccinationRouter = Router();
 
 scheduleVaccinationRouter.post(
   "/",
-  verifyUser,
-  verifyAdmin,
   async (req: Request, res: Response): Promise<Response> => {
     if (req.user.isSuperUser) {
       return res.status(400).send({ errors: ["Unauthorized"] });

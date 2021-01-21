@@ -1,7 +1,7 @@
 import { getConnection } from "typeorm";
-import { User } from "../../entity/User";
+import { User } from "../../../entity/User";
 import { timeSlots } from "./timeSlots";
-import { sendMail } from "../utils/sendMail";
+import { sendMail } from "../../utils/sendMail";
 
 const getTimeSlot = (patientsPerSlot: number, idx: number): string =>
   timeSlots[Math.floor(idx / patientsPerSlot) % timeSlots.length]!;

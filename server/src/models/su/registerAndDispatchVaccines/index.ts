@@ -1,7 +1,7 @@
 import { Point } from "geojson";
 import { getConnection } from "typeorm";
-import { User } from "../../entity/User";
-import { sendMail } from "../utils/sendMail";
+import { User } from "../../../entity/User";
+import { sendMail } from "../../utils/sendMail";
 
 const getVaccinationDate = (adminSUDist: number): string => {
   let numDays = Math.ceil(adminSUDist / (1000 * 250));

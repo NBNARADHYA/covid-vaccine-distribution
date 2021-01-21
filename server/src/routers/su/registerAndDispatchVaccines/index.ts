@@ -1,14 +1,10 @@
 import { Request, Response, Router } from "express";
-import { verifySuperUser } from "../../models/middlewares/verifySuperUser";
-import { verifyUser } from "../../models/middlewares/verifyUser";
-import { registerAndDispatchVaccines } from "../../models/registerAndDispatchVaccines";
+import { registerAndDispatchVaccines } from "../../../models/su/registerAndDispatchVaccines";
 
 export const registerAndDispatchVaccinesRouter = Router();
 
 registerAndDispatchVaccinesRouter.post(
   "/",
-  verifyUser,
-  verifySuperUser,
   async (req: Request, res: Response): Promise<Response> => {
     if (!req.body.numVaccines) {
       return res.status(400).json({ error: "numVaccines required" });
