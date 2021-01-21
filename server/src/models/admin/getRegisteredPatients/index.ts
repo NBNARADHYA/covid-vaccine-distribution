@@ -1,7 +1,7 @@
 import { getConnection } from "typeorm";
 import { User } from "../../../entity/User";
 
-interface PatientDetail {
+export interface PatientDetail {
   email: string;
   firstName: string;
   lastName?: string;
