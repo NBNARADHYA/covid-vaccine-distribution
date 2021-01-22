@@ -75,7 +75,7 @@ export const RegisterForVaccination = ({ history }) => {
 
   if (accessToken) {
     if (isAdmin) {
-      history.push("/admin");
+      history.push("/admin/dashboard");
       return null;
     }
   } else history.push("/login");

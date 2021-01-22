@@ -43,6 +43,7 @@ export const login = async ({
       user.covidVulnerabilityScore !== null &&
       user.covidVulnerabilityScore !== undefined,
     vaccinationDate: user.vaccinationDate,
+    location: user.location,
   };
 
   const accessToken = createAccessToken(payload);

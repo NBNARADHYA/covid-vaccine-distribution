@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const RegisterPatientsForVaccination = ({ history }) => {
+export const SchedulePatientsForVaccination = ({ history }) => {
   const classes = useStyles();
   const [errOpen, setErrOpen] = useState(false);
   const [error, setError] = useState(null);
@@ -81,7 +81,7 @@ export const RegisterPatientsForVaccination = ({ history }) => {
           }}
           severity="success"
         >
-          Vaccination registered for the most vulnerable patients according to
+          Vaccination scheduled for the most vulnerable patients according to
           the priority list!
         </Alert>
       </Snackbar>

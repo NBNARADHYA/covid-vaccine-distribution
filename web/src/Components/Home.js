@@ -8,7 +8,7 @@ export const Home = ({ history }) => {
     user: { isProfileAdded, isAdmin, vaccinationDate },
   } = useContext(AccessTokenContext);
 
-  if (isAdmin) history.push("/admin");
+  if (isAdmin) history.push("/admin/dashboard");
 
   if (!accessToken) {
     history.push("/login");

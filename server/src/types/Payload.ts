@@ -1,3 +1,5 @@
+import { Point } from "geojson";
+
 export interface Payload {
   email: string;
   firstName: string;
@@ -6,4 +8,5 @@ export interface Payload {
   isSuperUser: boolean;
   isProfileAdded: boolean;
   vaccinationDate?: string;
+  location: Point;
 }

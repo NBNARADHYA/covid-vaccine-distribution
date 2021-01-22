@@ -28,6 +28,7 @@ export const refreshToken = async (token: string): Promise<string> => {
         user.covidVulnerabilityScore !== null &&
         user.covidVulnerabilityScore !== undefined,
       vaccinationDate: user.vaccinationDate,
+      location: user.location,
     } as Payload);
   } catch (error) {
     throw new Error("INVALID_TOKEN");
