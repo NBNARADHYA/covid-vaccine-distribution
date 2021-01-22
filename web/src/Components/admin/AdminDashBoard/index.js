@@ -149,18 +149,20 @@ export const AdminDashBoard = ({ history }) => {
             ),
             datasets: [
               {
-                label: "Number of patients",
+                label: "#patients vaccinated",
                 data: Object.keys(scheduledOrVaccinatedPatients).map(
-                  (day) => scheduledOrVaccinatedPatients[day].length
+                  (day) => registeredPatients["vaccinated"][day]?.length || 0
                 ),
-                // borderColor: "rgba(255, 99, 132, 1)",
-                backgroundColor: Object.keys(
-                  scheduledOrVaccinatedPatients
-                ).map((day) =>
-                  registeredPatients["vaccinated"][day]
-                    ? "rgba(255, 99, 132, 0.2)"
-                    : "rgba(54, 162, 235, 1)"
+                borderColor: "#00e600",
+                backgroundColor: "#b3ffb3",
+              },
+              {
+                label: "#patients scheduled for vaccination",
+                data: Object.keys(registeredPatients["scheduled"]).map(
+                  (day) => registeredPatients["scheduled"][day]?.length | 0
                 ),
+                borderColor: "#ff4d4d",
+                backgroundColor: "#ffb3b3",
               },
             ],
           }}
@@ -207,6 +209,23 @@ export const AdminDashBoard = ({ history }) => {
                 justify="center"
                 alignItems="center"
               >
+                {state === "notScheduled" &&
+                  Boolean(Object.keys(registeredPatients[state]).length) && (
+                    <Grid item>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        onClick={() =>
+                          history.push(
+                            "/admin/schedule_patients_for_vaccination"
+                          )
+                        }
+                      >
+                        Schedule time slots for these patients
+                      </Button>
+                    </Grid>
+                  )}
                 {Object.entries(registeredPatients[state]).map(
                   ([date, patients], idx) => (
                     <Grid

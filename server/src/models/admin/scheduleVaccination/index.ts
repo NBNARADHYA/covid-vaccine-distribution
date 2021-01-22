@@ -18,10 +18,16 @@ const getVaccinationDate = (
   return prevDate.toDateString();
 };
 
+type ReturnType = {
+  email: string;
+  vaccinationDate: string;
+  vaccinationTimeSlot: string;
+}[];
+
 export const scheduleVaccination = async (
   adminEmail: string,
   patientsPerSlot: number
-): Promise<boolean> => {
+): Promise<ReturnType> => {
   const dbConnection = getConnection();
 
   try {
@@ -40,23 +46,21 @@ export const scheduleVaccination = async (
       .orderBy(`"covidVulnerabilityScore"`, "DESC")
       .getRawMany();
 
-    if (!registeredPatients.length) return true;
+    if (!registeredPatients.length) return [];
 
     // Compute the time slot of the patients according to patientsPerSlot
     // Also, new vaccinationDate if it has changed
-    const registeredPatientsDetails: {
-      email: string;
-      vaccinationDate: string;
-      vaccinationTimeSlot: string;
-    }[] = registeredPatients.map(({ email, vaccinationDate }, idx) => ({
-      email,
-      vaccinationDate: getVaccinationDate(
-        patientsPerSlot,
-        idx,
-        new Date(vaccinationDate)
-      ),
-      vaccinationTimeSlot: getTimeSlot(patientsPerSlot, idx),
-    }));
+    const registeredPatientsDetails: ReturnType = registeredPatients.map(
+      ({ email, vaccinationDate }, idx) => ({
+        email,
+        vaccinationDate: getVaccinationDate(
+          patientsPerSlot,
+          idx,
+          new Date(vaccinationDate)
+        ),
+        vaccinationTimeSlot: getTimeSlot(patientsPerSlot, idx),
+      })
+    );
 
     // Update the patients' entries with the new values computed
     await dbConnection
@@ -94,7 +98,7 @@ export const scheduleVaccination = async (
       }
     );
 
-    return true;
+    return registeredPatientsDetails;
   } catch (error) {
     console.log(error);
     throw new Error("Internal server error");

@@ -10,7 +10,7 @@ getRegisteredPatientsRouter.get(
       const patients = await getRegisteredPatients(req.user.email);
       return res.status(200).send(patients);
     } catch (error) {
-      return res.status(500).send({ errors: [error.message] });
+      return res.status(500).send({ error: error.message });
     }
   }
 );
