@@ -7,6 +7,7 @@ export interface PatientDetail {
   lastName?: string;
   vaccinationDate?: string;
   covidVulnerabilityScore?: number;
+  isVaccinated: boolean;
 }
 
 interface ReturnType {
@@ -55,6 +56,7 @@ export const getRegisteredPatients = async (
           covidVulnerabilityScore,
           vaccinationTimeSlot,
           location,
+          isVaccinated: !!isVaccinated,
         };
         if (isVaccinated) {
           patients.vaccinated.push(data);

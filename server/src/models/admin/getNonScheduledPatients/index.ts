@@ -2,9 +2,11 @@ import { getConnection } from "typeorm";
 import { User } from "../../../entity/User";
 import { PatientDetail } from "../getRegisteredPatients";
 
+interface NonScheduledPatientDetail extends Partial<PatientDetail> {}
+
 export const getNonScheduledPatients = async (
   adminEmail: string
-): Promise<PatientDetail[]> => {
+): Promise<NonScheduledPatientDetail[]> => {
   const dbConnection = getConnection();
 
   try {

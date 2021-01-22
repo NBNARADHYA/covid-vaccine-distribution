@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -9,6 +10,8 @@ import {
   Typography,
   Button,
 } from "@material-ui/core";
+import ReactMapGL, { Marker, Popup } from "react-map-gl";
+import "./adminDashBoard.css";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { Bar } from "react-chartjs-2";
@@ -43,7 +46,13 @@ const useStyles = makeStyles((theme) => ({
 
 export const AdminDashBoard = ({ history }) => {
   const {
-    user: { isAdmin, firstName, lastName, email },
+    user: {
+      isAdmin,
+      firstName,
+      lastName,
+      email,
+      location: { coordinates },
+    },
     accessToken,
     setAccessToken,
   } = useContext(AccessTokenContext);
@@ -55,6 +64,14 @@ export const AdminDashBoard = ({ history }) => {
   const [expanded, setExpanded] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
+
+  const [viewport, setViewport] = useState({
+    latitude: coordinates[0],
+    longitude: coordinates[1],
+    zoom: 6,
+  });
+
+  const [selectedPatient, setSelectedPatient] = useState(null);
 
   const handleActionsClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -84,7 +101,6 @@ export const AdminDashBoard = ({ history }) => {
     })
       .then((res) => res.json())
       .then((res) => {
-        console.log(res);
         const newRegisteredPatients = {};
         ["scheduled", "notScheduled", "vaccinated"].forEach((state) => {
           const patients = {};
@@ -346,6 +362,109 @@ export const AdminDashBoard = ({ history }) => {
           </Typography>
           <Typography variant="body1">{email}</Typography>
         </div>
+      </div>
+      <div style={{ marginBottom: " 3vh" }}>
+        <Typography
+          variant="h5"
+          color="secondary"
+          style={{ marginBottom: "1vh" }}
+        >
+          Location
+        </Typography>
+        <ReactMapGL
+          {...viewport}
+          onViewportChange={(viewport) => setViewport(viewport)}
+          height="70vh"
+          width="70vw"
+          mapboxApiAccessToken={process.env.REACT_APP_MAP_TOKEN}
+          mapStyle="mapbox://styles/nbnaradhya/ckk8focsa1bga17nzaf6wrx51"
+        >
+          <Marker latitude={coordinates[0]} longitude={coordinates[1]}>
+            <button className="marker-btn">
+              <img src="/vaccinationIcon.webp" alt="Vaccination center" />
+            </button>
+          </Marker>
+          {Object.entries(scheduledOrVaccinatedPatients).map(
+            ([date, patients], idx) => (
+              <React.Fragment key={+date + idx}>
+                {patients.map((patient) => {
+                  const {
+                    firstName,
+                    lastName,
+                    location: { coordinates },
+                    email,
+                    isVaccinated,
+                  } = patient;
+                  return (
+                    <Marker
+                      latitude={coordinates[0]}
+                      longitude={coordinates[1]}
+                      key={email}
+                    >
+                      <button
+                        className="marker-btn"
+                        onClick={() => setSelectedPatient({ ...patient })}
+                      >
+                        <img
+                          src={
+                            isVaccinated
+                              ? `/greenPatientIcon.png`
+                              : `/redPatientIcon.png`
+                          }
+                          alt={firstName + " " + lastName}
+                        />
+                      </button>
+                    </Marker>
+                  );
+                })}
+              </React.Fragment>
+            )
+          )}
+          {selectedPatient && (
+            <Popup
+              latitude={selectedPatient.location.coordinates[0]}
+              longitude={selectedPatient.location.coordinates[1]}
+              onClose={() => setSelectedPatient(null)}
+              className={
+                selectedPatient.isVaccinated ? `popup-green` : `popup-red`
+              }
+            >
+              <div
+                className={
+                  selectedPatient.isVaccinated
+                    ? `popup-green popup`
+                    : `popup-red popup`
+                }
+              >
+                <Typography variant="body1">
+                  <b style={{ marginRight: "7px" }}>Name</b>
+                  {selectedPatient.firstName + " " + selectedPatient.lastName}
+                </Typography>
+                <Typography variant="body1">
+                  <b style={{ marginRight: "7px" }}>Email</b>
+                  <a
+                    style={{
+                      textDecoration: "none",
+                      color: "grey",
+                    }}
+                    href={`mailto:${selectedPatient.email}`}
+                  >
+                    {email}
+                  </a>
+                </Typography>
+                <Typography variant="body1">
+                  <b style={{ marginRight: "7px" }}>Score</b>
+                  {selectedPatient.covidVulnerabilityScore}
+                </Typography>
+                <Typography variant="body1">
+                  <b style={{ marginRight: "7px" }}>Date</b>
+                  {selectedPatient.vaccinationDate},{" "}
+                  {selectedPatient.vaccinationTimeSlot}
+                </Typography>
+              </div>
+            </Popup>
+          )}
+        </ReactMapGL>
       </div>
     </Container>
   );

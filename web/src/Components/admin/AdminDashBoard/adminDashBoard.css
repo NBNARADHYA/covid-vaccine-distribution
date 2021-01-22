@@ -1,0 +1,22 @@
+.marker-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.marker-btn img {
+  width: 35px;
+  height: 35px;
+}
+
+.popup {
+  padding: 5px;
+}
+
+.popup-green {
+  background-color: #ccffcc !important;
+}
+
+.popup-red {
+  background-color: #ffd6cc !important;
+}
