@@ -3,7 +3,7 @@ export const isTokenExpired = (exp) => Date.now() > exp * 1000 + 3000;
 export const refreshToken = async (setAccessToken) => {
   try {
     const { error, accessToken } = await fetch(
-      `${process.env.REACT_APP_SERVER}/refresh_token`,
+      `${process.env.REACT_APP_SERVER}/auth/refresh_token`,
       {
         method: "POST",
         credentials: "include",

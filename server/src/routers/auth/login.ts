@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
-import { login } from "../models/login";
-import { isEmail } from "./utils/isEmail";
+import { login } from "../../models/auth/login";
+import { isEmail } from "../utils/isEmail";
 
 export const loginRouter = Router();
 

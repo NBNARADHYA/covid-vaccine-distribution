@@ -1,6 +1,6 @@
 import { getConnection } from "typeorm";
-import { PatientProfile } from "../../entity/PatientProfile";
-import { User } from "../../entity/User";
+import { PatientProfile } from "../../../entity/PatientProfile";
+import { User } from "../../../entity/User";
 import fetch, { RequestInit } from "node-fetch";
 
 export interface AddPatientProfileProps extends PatientProfile {

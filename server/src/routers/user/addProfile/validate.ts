@@ -1,5 +1,5 @@
-import { PatientProfile } from "../../entity/PatientProfile";
-import { isDate } from "../utils/isDate";
+import { PatientProfile } from "../../../entity/PatientProfile";
+import { isDate } from "../../utils/isDate";
 
 export const validate = ({
   ageBand,

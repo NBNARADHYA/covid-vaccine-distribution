@@ -1,6 +1,6 @@
 import { Point } from "geojson";
 import { getConnection } from "typeorm";
-import { User } from "../../../entity/User";
+import { User } from "../../entity/User";
 
 interface AdminType {
   email: string;

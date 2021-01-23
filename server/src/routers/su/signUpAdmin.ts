@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 import { signUpAdmin } from "../../models/su/signUpAdmin";
-import { validate } from "../signUp/validate";
+import { validate } from "../auth/signUp/validate";
 
 export const signUpAdminRouter = Router();
 

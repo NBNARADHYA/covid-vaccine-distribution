@@ -129,7 +129,7 @@ export const SignUp = ({ history }) => {
           try {
             let res = await fetch(
               `${process.env.REACT_APP_SERVER}/${
-                isAdmin ? `signup_admin` : `signup`
+                isAdmin ? `su/signup_admin` : `auth/signup`
               }`,
               {
                 method: "POST",

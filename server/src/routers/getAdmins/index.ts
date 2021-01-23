@@ -1,5 +1,5 @@
 import { Router, Response } from "express";
-import { getAdmins } from "../../../models/su/getAdmins";
+import { getAdmins } from "../../models/getAdmins";
 
 export const getAdminsRouter = Router();
 

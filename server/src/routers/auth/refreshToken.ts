@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { refreshToken } from "../models/refreshToken";
+import { refreshToken } from "../../models/auth/refreshToken";
 
 const refreshTokenRouter = Router();
 

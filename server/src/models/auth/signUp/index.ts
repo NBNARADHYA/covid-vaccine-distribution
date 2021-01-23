@@ -1,7 +1,7 @@
 import { hash } from "bcryptjs";
 import { getConnection } from "typeorm";
-import { User } from "../../entity/User";
-import { sendMail } from "../utils/sendMail";
+import { User } from "../../../entity/User";
+import { sendMail } from "../../utils/sendMail";
 import { v4 as genHash } from "uuid";
 
 export interface SignUpProps {

@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { signUp } from "../../models/signUp";
+import { signUp } from "../../../models/auth/signUp";
 import { validate } from "./validate";
 
 export const signUpRouter = Router();

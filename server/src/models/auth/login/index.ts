@@ -1,10 +1,10 @@
 import { compare } from "bcryptjs";
 import { Response } from "express";
 import { getConnection } from "typeorm";
-import { User } from "../../entity/User";
-import { Payload } from "../../types/Payload";
-import { createAccessToken } from "../utils/createAccessToken";
-import { createRefreshToken } from "../utils/createRefreshToken";
+import { User } from "../../../entity/User";
+import { Payload } from "../../../types/Payload";
+import { createAccessToken } from "../../utils/createAccessToken";
+import { createRefreshToken } from "../../utils/createRefreshToken";
 
 export interface LoginProps {
   email: string;
@@ -52,7 +52,7 @@ export const login = async ({
 
   res.cookie("jid", refreshToken, {
     httpOnly: true,
-    path: "/refresh_token",
+    path: "/auth/refresh_token",
   });
 
   return { accessToken };

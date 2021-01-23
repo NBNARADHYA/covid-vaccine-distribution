@@ -1,6 +1,6 @@
 import { getConnection } from "typeorm";
 import { User } from "../../../entity/User";
-import { signUp, SignUpProps } from "../../signUp";
+import { signUp, SignUpProps } from "../../auth/signUp";
 
 export const signUpAdmin = async (user: SignUpProps): Promise<boolean> => {
   try {

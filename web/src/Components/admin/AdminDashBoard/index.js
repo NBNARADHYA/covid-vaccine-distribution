@@ -11,7 +11,6 @@ import {
   Button,
 } from "@material-ui/core";
 import ReactMapGL, { Marker, Popup } from "react-map-gl";
-import "./adminDashBoard.css";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { Bar } from "react-chartjs-2";
@@ -47,7 +46,6 @@ const useStyles = makeStyles((theme) => ({
 export const AdminDashBoard = ({ history }) => {
   const {
     user: {
-      isAdmin,
       firstName,
       lastName,
       email,
@@ -89,8 +87,6 @@ export const AdminDashBoard = ({ history }) => {
   const handleChange = (state) => (_, isExpanded) => {
     setExpanded(isExpanded ? state : false);
   };
-
-  if (!isAdmin) history.push("/");
 
   useEffect(() => {
     fetch(`${process.env.REACT_APP_SERVER}/admin/registered_patients`, {
@@ -377,7 +373,7 @@ export const AdminDashBoard = ({ history }) => {
           height="70vh"
           width="70vw"
           mapboxApiAccessToken={process.env.REACT_APP_MAP_TOKEN}
-          mapStyle="mapbox://styles/nbnaradhya/ckk8focsa1bga17nzaf6wrx51"
+          mapStyle={process.env.REACT_APP_MAP_STYLE_URL}
         >
           <Marker latitude={coordinates[0]} longitude={coordinates[1]}>
             <button className="marker-btn">
@@ -385,7 +381,7 @@ export const AdminDashBoard = ({ history }) => {
             </button>
           </Marker>
           {Object.entries(scheduledOrVaccinatedPatients).map(
-            ([date, patients], idx) => (
+            ([_date, patients], idx) => (
               <React.Fragment key={idx}>
                 {patients.map((patient) => {
                   const {

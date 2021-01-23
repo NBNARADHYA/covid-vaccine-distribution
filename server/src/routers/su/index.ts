@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { getAdminsRouter } from "./getAdmins";
 import { getRegisteredPatientsRouter } from "./getRegisteredPatients";
 import { registerAndDispatchVaccinesRouter } from "./registerAndDispatchVaccines";
 import { signUpAdminRouter } from "./signUpAdmin";
@@ -12,4 +11,3 @@ superUserRouter.use(
   registerAndDispatchVaccinesRouter
 );
 superUserRouter.use("/registered_patients", getRegisteredPatientsRouter);
-superUserRouter.use("/admins", getAdminsRouter);

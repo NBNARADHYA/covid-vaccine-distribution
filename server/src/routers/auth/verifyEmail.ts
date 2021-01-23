@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { verifyEmail } from "../models/verifyEmail";
+import { verifyEmail } from "../../models/auth/verifyEmail";
 
 export const verifyEmailRouter = Router();
 

@@ -84,13 +84,17 @@ export const Login = ({ history }) => {
         onSubmit={async (values, { setSubmitting }) => {
           setSubmitting(true);
           try {
-            let res = await fetch(`${process.env.REACT_APP_SERVER}/login`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(values),
-            });
+            let res = await fetch(
+              `${process.env.REACT_APP_SERVER}/auth/login`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(values),
+                credentials: "include",
+              }
+            );
             res = await res.json();
             if (res.errors) {
               setError(joinErrors(res.errors));

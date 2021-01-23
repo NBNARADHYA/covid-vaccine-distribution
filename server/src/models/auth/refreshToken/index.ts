@@ -1,8 +1,8 @@
 import { verify } from "jsonwebtoken";
 import { getConnection } from "typeorm";
-import { User } from "../../entity/User";
-import { Payload } from "../../types/Payload";
-import { createAccessToken } from "../utils/createAccessToken";
+import { User } from "../../../entity/User";
+import { Payload } from "../../../types/Payload";
+import { createAccessToken } from "../../utils/createAccessToken";
 
 export const refreshToken = async (token: string): Promise<string> => {
   const dbConnection = getConnection();

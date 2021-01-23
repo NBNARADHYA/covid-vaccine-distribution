@@ -1,11 +1,11 @@
 import { Request, Response, Router } from "express";
-import { addPatientProfile } from "../../models/addPatientProfile";
-import { verifyUser } from "../../models/middlewares/verifyUser";
+import { addPatientProfile } from "../../../models/user/addPatientProfile";
+import { verifyUser } from "../../../models/middlewares/verifyUser";
 import { validate } from "./validate";
 
-export const addPatientProfileRouter = Router();
+export const addProfileRouter = Router();
 
-addPatientProfileRouter.post(
+addProfileRouter.post(
   "/",
   verifyUser,
   async (req: Request, res: Response): Promise<Response> => {
