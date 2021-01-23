@@ -19,13 +19,13 @@ import {
 } from "@material-ui/pickers";
 import { Alert } from "@material-ui/lab";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { ErrorAlert } from "../common/ErrorAlert";
-import { joinErrors } from "../utils/joinErrors";
-import { AccessTokenContext } from "../../Contexts/AccessToken";
+import { ErrorAlert } from "../../common/ErrorAlert";
+import { joinErrors } from "../../utils/joinErrors";
+import { AccessTokenContext } from "../../../Contexts/AccessToken";
 import { validate } from "./validate";
 import DateFnsUtils from "@date-io/date-fns";
 import { getAgeBand } from "./getAgeBand";
-import { isTokenExpired, refreshToken } from "../utils/refreshToken";
+import { isTokenExpired, refreshToken } from "../../utils/refreshToken";
 
 const useStyles = makeStyles((theme) => ({
   formContainer: {
@@ -78,7 +78,7 @@ export const RegisterForVaccination = ({ history }) => {
       history.push("/admin/dashboard");
       return null;
     }
-  } else history.push("/login");
+  } else history.push("/auth/login");
 
   if (success) {
     return (
@@ -144,7 +144,7 @@ export const RegisterForVaccination = ({ history }) => {
             setSubmitting(true);
 
             if (isTokenExpired(exp) && !(await refreshToken(setAccessToken)))
-              history.push("/login");
+              history.push("/auth/login");
 
             const { age, ...rest } = values;
             try {

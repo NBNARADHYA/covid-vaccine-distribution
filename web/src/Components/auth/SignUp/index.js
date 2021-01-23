@@ -5,17 +5,20 @@ import {
   Grid,
   TextField,
   Button,
+  MenuItem,
   Snackbar,
+  FormControlLabel,
+  Checkbox,
 } from "@material-ui/core";
 import { Form, Formik, Field, ErrorMessage } from "formik";
-import { isEmail } from "./utils/isEmail";
-import { ErrorAlert } from "./common/ErrorAlert";
+import { isEmail } from "../../utils/isEmail";
+import { states } from "./states";
+import { ErrorAlert } from "../../common/ErrorAlert";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Alert } from "@material-ui/lab";
-import { joinErrors } from "./utils/joinErrors";
-import { AccessTokenContext } from "../Contexts/AccessToken";
-import { useContext } from "react";
+import { joinErrors } from "../../utils/joinErrors";
+import { AccessTokenContext } from "../../../Contexts/AccessToken";
 
 const useStyles = makeStyles((theme) => ({
   formContainer: {
@@ -46,14 +49,47 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const Login = ({ history }) => {
+export const SignUp = ({ history }) => {
   const classes = useStyles();
   const [errOpen, setErrOpen] = useState(false);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
+  const {
+    accessToken,
+    user: { isAdmin },
+  } = useContext(AccessTokenContext);
 
-  const { setAccessToken, accessToken } = useContext(AccessTokenContext);
+  if (accessToken && !isAdmin) {
+    history.push("/");
+    return null;
+  }
 
-  if (accessToken) history.push("/");
+  if (success)
+    return (
+      <Snackbar
+        open={success}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        autoHideDuration={6000}
+        onClose={() => {
+          setSuccess(false);
+          history.push(`/${isAdmin ? `signup` : `login`}`);
+        }}
+      >
+        <Alert
+          onClose={() => {
+            setSuccess(false);
+            history.push(`/${isAdmin ? `signup` : `login`}`);
+          }}
+          severity="success"
+        >
+          {`${isAdmin ? `Admin` : ``} Account created successfully! ${
+            isAdmin
+              ? `Ask the new admin to verify his/her email`
+              : `Verify your email`
+          } !`}
+        </Alert>
+      </Snackbar>
+    );
 
   return (
     <Container className={classes.formContainer}>
@@ -62,46 +98,52 @@ export const Login = ({ history }) => {
         className={classes.formHeader}
         color="primary"
       >
-        Login
+        Signup
       </Typography>
       <Formik
         initialValues={{
           email: "",
           password: "",
+          firstName: "",
+          lastName: "",
+          state: "",
         }}
-        validate={({ email, password }) => {
+        validate={({ email, password, firstName, state }) => {
           const errors = {};
           if (!email) {
             errors.email = "Email required";
           } else if (!isEmail(email)) errors.email = "Invalid Email";
 
+          if (!firstName) errors.firstName = "First name required";
+
           if (!password) errors.password = "Password required";
           else if (password.length < 5)
             errors.password = "Password should be min. 5 characters long";
+
+          if (state === "") errors.state = "Location required";
 
           return errors;
         }}
         onSubmit={async (values, { setSubmitting }) => {
           setSubmitting(true);
           try {
-            let res = await fetch(`${process.env.REACT_APP_SERVER}/login`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(values),
-            });
+            let res = await fetch(
+              `${process.env.REACT_APP_SERVER}/${
+                isAdmin ? `signup_admin` : `signup`
+              }`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(values),
+              }
+            );
             res = await res.json();
             if (res.errors) {
               setError(joinErrors(res.errors));
               setErrOpen(true);
-            } else if (!res.accessToken) {
-              setError("Something went wrong ! Please try again later!");
-              setErrOpen(true);
-            } else {
-              setAccessToken(res.accessToken);
-              history.push("/");
-            }
+            } else setSuccess(true);
           } catch (error) {
             setError(error);
             setErrOpen(true);
@@ -110,9 +152,28 @@ export const Login = ({ history }) => {
           }
         }}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, handleChange, values }) => (
           <Form>
             <Grid container direction="column" spacing={2}>
+              <Grid item xs={12}>
+                <Field
+                  name="firstName"
+                  as={TextField}
+                  label="First Name"
+                  variant="outlined"
+                  fullWidth
+                />
+                <ErrorMessage name="firstName" component={ErrorAlert} />
+              </Grid>
+              <Grid item xs={12}>
+                <Field
+                  name="lastName"
+                  as={TextField}
+                  label="Last Name"
+                  variant="outlined"
+                  fullWidth
+                />
+              </Grid>
               <Grid item xs={12}>
                 <Field
                   name="email"
@@ -134,14 +195,40 @@ export const Login = ({ history }) => {
                 />
                 <ErrorMessage name="password" component={ErrorAlert} />
               </Grid>
+              <Grid item container xs={12} justify="flex-start">
+                {isAdmin && (
+                  <Grid item xs={6}>
+                    <FormControlLabel
+                      disabled
+                      control={<Checkbox checked />}
+                      label="Admin ?"
+                    />
+                  </Grid>
+                )}
+                <Grid item xs={6}>
+                  <TextField
+                    select
+                    label="Location"
+                    value={values.state}
+                    onChange={handleChange("state")}
+                    fullWidth
+                  >
+                    {states.map((state, idx) => (
+                      <MenuItem value={idx} key={idx}>
+                        {state}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+              </Grid>
               <Grid item xs={12}>
                 <Typography
                   variant="overline"
                   color="textSecondary"
                   component={Link}
-                  to="/signup"
+                  to="/auth/login"
                 >
-                  Not signed up ?
+                  Already signed up ?
                 </Typography>
               </Grid>
               <Grid item xs={12}>
@@ -153,7 +240,7 @@ export const Login = ({ history }) => {
                   className={classes.submitBtn}
                   disabled={isSubmitting}
                 >
-                  Login
+                  Sign Up
                 </Button>
               </Grid>
             </Grid>

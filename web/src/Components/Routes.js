@@ -1,11 +1,9 @@
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import { Admin } from "./admin";
+import { Auth } from "./auth";
 import { Header } from "./common/Header";
 import { Home } from "./Home";
-import { Login } from "./Login";
-import { RegisterForVaccination } from "./RegisterForVaccination";
-import { SignUp } from "./SignUp/";
-import { VerifyEmail } from "./VerifyEmail";
+import { User } from "./user";
 
 const Routes = () => (
   <div
@@ -16,17 +14,10 @@ const Routes = () => (
   >
     <Header />
     <Switch>
-      <Route exact path="/" component={Home} />
-      <Route exact path="/signup" component={SignUp} />
-      <Route exact path="/login" component={Login} />
-      <Route
-        exact
-        path="/register_for_covid_vaccine"
-        component={RegisterForVaccination}
-      />
-      <Route exact path="/verify_email" component={VerifyEmail} />
+      <Route path="/auth" component={Auth} />
       <Route path="/admin" component={Admin} />
-      <Redirect to="/register_for_covid_vaccine" />
+      <Route path="/user" component={User} />
+      <Route path="/" component={Home} />
     </Switch>
   </div>
 );

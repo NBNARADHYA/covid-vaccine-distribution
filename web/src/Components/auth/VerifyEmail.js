@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useQuery } from "./hooks/useQuery";
+import { useQuery } from "../hooks/useQuery";
 import { CircularProgress, Snackbar } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 
@@ -34,13 +34,13 @@ export const VerifyEmail = ({ history }) => {
         autoHideDuration={6000}
         onClose={() => {
           setSuccess(false);
-          history.push("/login");
+          history.push("/auth/login");
         }}
       >
         <Alert
           onClose={() => {
             setSuccess(false);
-            history.push("/login");
+            history.push("/auth/login");
           }}
           severity="success"
         >

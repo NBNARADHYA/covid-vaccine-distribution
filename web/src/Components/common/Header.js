@@ -48,12 +48,12 @@ export const Header = () => {
                   credentials: "include",
                 });
               }
-              history.push("/login");
+              history.push("/auth/login");
             }}
           >
             {accessToken
               ? "Logout"
-              : location.pathname !== "/login"
+              : location.pathname !== "/auth/login"
               ? "Login"
               : ""}
           </Button>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Switch, useRouteMatch } from "react-router-dom";
+import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 import { SchedulePatientsForVaccination } from "./ScheduleVaccination";
 import { AdminDashBoard } from "./AdminDashBoard";
 
@@ -13,6 +13,7 @@ export const Admin = () => {
         path={`${path}/schedule_patients_for_vaccination`}
         component={SchedulePatientsForVaccination}
       />
+      <Redirect to="/admin/dashboard" />
     </Switch>
   );
 };

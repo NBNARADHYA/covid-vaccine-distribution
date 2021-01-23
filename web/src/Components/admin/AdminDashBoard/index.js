@@ -121,7 +121,7 @@ export const AdminDashBoard = ({ history }) => {
             credentials: "include",
           });
         }
-        history.push("/login");
+        history.push("/auth/login");
       });
   }, [accessToken, history, setAccessToken]);
 
@@ -203,9 +203,9 @@ export const AdminDashBoard = ({ history }) => {
         >
           Patient Details
         </Typography>
-        {["scheduled", "notScheduled", "vaccinated"].map((state, idx) => (
+        {["scheduled", "notScheduled", "vaccinated"].map((state) => (
           <Accordion
-            key={idx}
+            key={state}
             expanded={expanded === state}
             onChange={handleChange(state)}
           >
@@ -243,14 +243,14 @@ export const AdminDashBoard = ({ history }) => {
                     </Grid>
                   )}
                 {Object.entries(registeredPatients[state]).map(
-                  ([date, patients], idx) => (
+                  ([date, patients]) => (
                     <Grid
                       item
                       container
                       direction="row"
                       xs={12}
                       spacing={2}
-                      key={idx}
+                      key={`${Math.random() * 10000}${date}${state}`}
                       justify="center"
                       alignItems="center"
                     >
@@ -277,7 +277,7 @@ export const AdminDashBoard = ({ history }) => {
                             vaccinationTimeSlot,
                             location: { coordinates },
                           }) => (
-                            <Grid item xs={12}>
+                            <Grid item xs={12} key={email}>
                               <Card className={classes.card}>
                                 <Grid item xs={12}>
                                   <Typography variant="body1">
@@ -386,7 +386,7 @@ export const AdminDashBoard = ({ history }) => {
           </Marker>
           {Object.entries(scheduledOrVaccinatedPatients).map(
             ([date, patients], idx) => (
-              <React.Fragment key={+date + idx}>
+              <React.Fragment key={idx}>
                 {patients.map((patient) => {
                   const {
                     firstName,

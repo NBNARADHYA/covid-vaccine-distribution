@@ -76,7 +76,7 @@ export const SchedulePatientsForVaccination = ({ history }) => {
     setAnchorEl(null);
   };
 
-  if (!accessToken || !isAdmin) history.push("/login");
+  if (!accessToken || !isAdmin) history.push("/auth/login");
 
   useEffect(() => {
     setLoading(true);
