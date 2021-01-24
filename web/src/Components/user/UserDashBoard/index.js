@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Container, Popover, Typography } from "@material-ui/core";
+import { Button, Container, Typography } from "@material-ui/core";
 import { useContext, useEffect, useState } from "react";
 import { AccessTokenContext } from "../../../Contexts/AccessToken";
 import ReactMapGL, { Layer, Marker, Popup, Source } from "react-map-gl";
@@ -7,7 +7,6 @@ import { point, nearestPoint, featureCollection } from "@turf/turf";
 
 export const UserDashBoard = ({ history }) => {
   const {
-    accessToken,
     user: {
       firstName,
       lastName,
@@ -72,16 +71,17 @@ export const UserDashBoard = ({ history }) => {
     <Container style={{ paddingTop: "3vh" }}>
       <Typography variant="h4" color="primary" style={{ marginBottom: "3vh" }}>
         <span style={{ marginRight: "30px" }}>Dashboard</span>
-        {!isProfileAdded && (
-          <span>
-            <Button
-              variant="contained"
-              onClick={() => history.push("/user/register_for_covid_vaccine")}
-            >
-              Register for vaccination
-            </Button>
-          </span>
-        )}
+        <span>
+          <Button
+            variant="contained"
+            onClick={() => history.push("/user/register_for_covid_vaccine")}
+            disabled={isProfileAdded}
+          >
+            {isProfileAdded
+              ? "You have registered for vaccination"
+              : "Register for vaccination"}
+          </Button>
+        </span>
       </Typography>
       <div style={{ marginBottom: "3vh" }}>
         <div style={{ marginBottom: "2vh" }}>
@@ -142,7 +142,6 @@ export const UserDashBoard = ({ history }) => {
           width="70vw"
           mapboxApiAccessToken={process.env.REACT_APP_MAP_TOKEN}
           mapStyle={process.env.REACT_APP_MAP_STYLE_URL}
-          onClick={(e) => console.log(e)}
         >
           <Marker latitude={coordinates[0]} longitude={coordinates[1]}>
             <button className="marker-btn">

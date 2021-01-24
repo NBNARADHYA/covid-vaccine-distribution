@@ -68,8 +68,6 @@ export const addPatientProfile = async ({
     await dbConnection.getRepository(PatientProfile).insert(patientProfile);
 
     // Call ML model to get covidVulnerabilityScore
-    // Then covidVulnerabilityScore is also updated in the following query
-
     const requestOptions: RequestInit = {
       method: "POST",
       headers: {
@@ -102,6 +100,7 @@ export const addPatientProfile = async ({
     const res = await fetch(`${process.env.MODEL_SERVER}/`, requestOptions);
     const { death_prob: covidVulnerabilityScore } = await res.json();
 
+    // Update covidVulnerabilityScore in the user table
     await dbConnection
       .getRepository(User)
       .update(

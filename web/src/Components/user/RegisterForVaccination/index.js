@@ -12,6 +12,10 @@ import {
   RadioGroup,
   Radio,
   Button,
+  Stepper,
+  Step,
+  StepLabel,
+  StepContent,
 } from "@material-ui/core";
 import {
   KeyboardDatePicker,
@@ -26,38 +30,25 @@ import { validate } from "./validate";
 import DateFnsUtils from "@date-io/date-fns";
 import { getAgeBand } from "./getAgeBand";
 import { isTokenExpired, refreshToken } from "../../utils/refreshToken";
+import { steps } from "./steps";
 
 const useStyles = makeStyles((theme) => ({
-  formContainer: {
-    [theme.breakpoints.down("sm")]: {
-      width: "90%",
-    },
-    [theme.breakpoints.between("sm", "lg")]: {
-      width: "65%",
-    },
-    [theme.breakpoints.up("lg")]: {
-      width: "29%",
-    },
-  },
   mainDiv: {
-    paddingTop: "15vh",
+    paddingTop: "3vh",
     paddingBottom: "6vh",
   },
   formHeaderDiv: {
     textAlign: "center",
-    paddingBottom: "3vh",
   },
   formHeader: {
-    fontSize: "35px",
+    fontSize: "24px",
   },
-  submitBtn: {
-    [theme.breakpoints.down("lg")]: {
-      width: "50%",
-    },
-    [theme.breakpoints.up("lg")]: {
-      width: "40%",
-    },
-    fontSize: "17px",
+  actionsContainer: {
+    marginBottom: theme.spacing(2),
+  },
+  button: {
+    marginTop: theme.spacing(1),
+    marginRight: theme.spacing(1),
   },
 }));
 
@@ -72,6 +63,14 @@ export const RegisterForVaccination = ({ history }) => {
     setUser,
   } = useContext(AccessTokenContext);
   const [success, setSuccess] = useState(isProfileAdded);
+  const [formData, setFormData] = useState([{}, {}, {}]);
+
+  const [activeStep, setActiveStep] = useState(0);
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
 
   if (accessToken) {
     if (isAdmin) {
@@ -104,6 +103,7 @@ export const RegisterForVaccination = ({ history }) => {
       </Snackbar>
     );
   }
+
   return (
     <div className={classes.mainDiv}>
       <div className={classes.formHeaderDiv}>
@@ -115,231 +115,167 @@ export const RegisterForVaccination = ({ history }) => {
           Register for vaccination
         </Typography>
       </div>
-      <Container className={classes.formContainer}>
-        <Formik
-          initialValues={{
-            age: "",
-            asthma: "",
-            cardiovascular: "",
-            contactOtherCovid: "",
-            copd: "",
-            dateSymptoms: new Date(),
-            covidTestResult: "",
-            diabetes: "",
-            hypertension: "",
-            icu: "",
-            inmsupr: "",
-            intubed: "",
-            obesity: "",
-            otherDisease: "",
-            patientType: "",
-            pneumonia: "",
-            pregnancy: "",
-            renalChronic: "",
-            sex: "",
-            tobacco: "",
-          }}
-          validate={validate}
-          onSubmit={async (values, { setSubmitting }) => {
-            setSubmitting(true);
+      <Container>
+        <Stepper activeStep={activeStep} orientation="vertical">
+          {steps.map((step, index) => (
+            <Step key={step.label}>
+              <StepLabel>{step.label}</StepLabel>
+              <StepContent>
+                <Formik
+                  initialValues={{ ...step.initialValues, ...formData[index] }}
+                  validate={(values) => validate(values, index)}
+                  onSubmit={async (values) => {
+                    if (activeStep === steps.length - 1) {
+                      setSubmitting(true);
 
-            if (isTokenExpired(exp) && !(await refreshToken(setAccessToken)))
-              history.push("/auth/login");
+                      if (
+                        isTokenExpired(exp) &&
+                        !(await refreshToken(setAccessToken))
+                      )
+                        history.push("/auth/login");
 
-            const { age, ...rest } = values;
-            try {
-              let res = await fetch(
-                `${process.env.REACT_APP_SERVER}/add_patient_profile`,
-                {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    authorization: `Bearer ${accessToken}`,
-                  },
-                  body: JSON.stringify({ ...rest, ageBand: getAgeBand(age) }),
-                }
-              );
-              res = await res.json();
-              if (res.errors) {
-                setError(joinErrors(res.errors));
-                setErrOpen(true);
-              } else if (res.error) {
-                setError(res.error);
-                setErrOpen(true);
-              } else {
-                setUser((prev) => ({ ...prev, isProfileAdded: true }));
-                setSuccess(true);
-              }
-            } catch (error) {
-              setError(error);
-              setErrOpen(true);
-            } finally {
-              setSubmitting(false);
-            }
-          }}
-        >
-          {({ isSubmitting, handleChange, values, setFieldValue }) => (
-            <Form>
-              <Grid container direction="column" spacing={4}>
-                <Grid item xs={12}>
-                  <Field
-                    name="age"
-                    as={TextField}
-                    label="Age"
-                    variant="outlined"
-                    fullWidth
-                  />
-                  <ErrorMessage name="age" component={ErrorAlert} />
-                </Grid>
-                <Grid item xs={12}>
-                  <FormControl>
-                    <FormLabel>Are you male or female ?</FormLabel>
-                    <RadioGroup
-                      name="sex"
-                      value={values.sex === "" ? -1 : +values.sex}
-                      onChange={handleChange("sex")}
-                    >
-                      <FormControlLabel
-                        control={<Radio />}
-                        value={1}
-                        label="Male"
-                      />
-                      <FormControlLabel
-                        control={<Radio />}
-                        value={0}
-                        label="Female"
-                      />
-                    </RadioGroup>
-                  </FormControl>
-                  <ErrorMessage name="sex" component={ErrorAlert} />
-                </Grid>
-                {Object.entries({
-                  icu: "Are you in ICU ?",
-                  contactOtherCovid:
-                    "Have you had contact with other covid positive folks ?",
-                  intubed: "Are you currently intubed ?",
-                  pneumonia: "Do you have pneumonia ?",
-                  diabetes: "Do you have diabetes",
-                  copd:
-                    "Do you have COPD (Chronic obstructive pulmonary disease) ?",
-                  asthma: "Do you have Asthma ?",
-                  inmsupr: "Do you have Immunosuppression ?",
-                  hypertension: "Do you have Hyper-tension ?",
-                  cardiovascular: "Do you have any cardio vascular problems ?",
-                  obesity: "Are you obese ?",
-                  renalChronic: "Do you have Chronic kidney disease",
-                  otherDisease: "Do you have any other disease ?",
-                  pregnancy: "Are your pregnant ?",
-                  tobacco: "Do you consume tobacco ?",
-                }).map(([field, message], idx) => (
-                  <Grid item xs={12} key={idx}>
-                    <FormControl>
-                      <FormLabel>{message}</FormLabel>
-                      <RadioGroup
-                        name={field}
-                        value={values[field] === "" ? -1 : +values[field]}
-                        onChange={handleChange(field)}
-                      >
-                        <FormControlLabel
-                          control={<Radio />}
-                          value={1}
-                          label="Yes"
-                        />
-                        <FormControlLabel
-                          control={<Radio />}
-                          value={0}
-                          label="No"
-                        />
-                      </RadioGroup>
-                    </FormControl>
-                    <ErrorMessage name={field} component={ErrorAlert} />
-                  </Grid>
-                ))}
-                <Grid item xs={12}>
-                  <FormControl>
-                    <FormLabel>What is your covid test result ?</FormLabel>
-                    <RadioGroup
-                      name="covidTestResult"
-                      value={
-                        values.covidTestResult === ""
-                          ? -1
-                          : +values.covidTestResult
+                      const { age, patientType, ...rest } = {
+                        ...formData[0],
+                        ...formData[1],
+                        ...formData[2],
+                        ...values,
+                      };
+                      try {
+                        let res = await fetch(
+                          `${process.env.REACT_APP_SERVER}/user/patient_profile`,
+                          {
+                            method: "POST",
+                            headers: {
+                              "Content-Type": "application/json",
+                              authorization: `Bearer ${accessToken}`,
+                            },
+                            body: JSON.stringify({
+                              ...rest,
+                              ageBand: getAgeBand(age),
+                              patientType: parseInt(patientType) + 1,
+                            }),
+                          }
+                        );
+                        res = await res.json();
+                        if (res.errors) {
+                          setError(joinErrors(res.errors));
+                          setErrOpen(true);
+                        } else if (res.error) {
+                          setError(res.error);
+                          setErrOpen(true);
+                        } else {
+                          setUser((prev) => ({
+                            ...prev,
+                            isProfileAdded: true,
+                          }));
+                          setSuccess(true);
+                        }
+                      } catch (error) {
+                        setError(error);
+                        setErrOpen(true);
+                      } finally {
+                        setSubmitting(false);
                       }
-                      onChange={handleChange("covidTestResult")}
-                    >
-                      <FormControlLabel
-                        control={<Radio />}
-                        value={1}
-                        label="Positive"
-                      />
-                      <FormControlLabel
-                        control={<Radio />}
-                        value={0}
-                        label="Negative"
-                      />
-                      <FormControlLabel
-                        control={<Radio />}
-                        value={2}
-                        label="Waiting for test results / not given test"
-                      />
-                    </RadioGroup>
-                  </FormControl>
-                  <ErrorMessage name="covidTestResult" component={ErrorAlert} />
-                </Grid>
-                <Grid item xs={12}>
-                  <FormControl>
-                    <FormLabel>
-                      Are you an outpatient or an inpatient ?
-                    </FormLabel>
-                    <RadioGroup
-                      name="patientType"
-                      value={
-                        values.patientType === "" ? -1 : +values.patientType
-                      }
-                      onChange={handleChange("patientType")}
-                    >
-                      <FormControlLabel
-                        control={<Radio />}
-                        value={1}
-                        label="Outpatient"
-                      />
-                      <FormControlLabel
-                        control={<Radio />}
-                        value={2}
-                        label="Inpatient"
-                      />
-                    </RadioGroup>
-                  </FormControl>
-                  <ErrorMessage name="patientType" component={ErrorAlert} />
-                </Grid>
-                <Grid item xs={12}>
-                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                    <KeyboardDatePicker
-                      margin="normal"
-                      label="Date since covid symptoms"
-                      format="MM/dd/yyyy"
-                      value={values.dateSymptoms}
-                      onChange={(val) => setFieldValue("dateSymptoms", val)}
-                    />
-                  </MuiPickersUtilsProvider>
-                  <ErrorMessage name="dateSymptoms" component={ErrorAlert} />
-                </Grid>
-                <Grid item xs={12}>
-                  <Button
-                    type="submit"
-                    size="large"
-                    variant="contained"
-                    color="primary"
-                    className={classes.submitBtn}
-                    disabled={isSubmitting}
-                  >
-                    Register
-                  </Button>
-                </Grid>
-              </Grid>
-            </Form>
-          )}
-        </Formik>
+                    } else {
+                      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+                      setFormData((prev) => {
+                        const newVal = prev.map((prevObj) => ({ ...prevObj }));
+                        newVal[index] = { ...values };
+                        return newVal;
+                      });
+                    }
+                  }}
+                >
+                  {({ values, handleChange, setFieldValue }) => (
+                    <Form>
+                      <Grid container direction="column" spacing={4}>
+                        {step.fields.map((field, index) =>
+                          field.name === "age" ? (
+                            <Grid item xs={12} key={index}>
+                              <Field
+                                name="age"
+                                as={TextField}
+                                label="Age"
+                                variant="outlined"
+                              />
+                              <ErrorMessage name="age" component={ErrorAlert} />
+                            </Grid>
+                          ) : field.name === "dateSymptoms" ? (
+                            <Grid item xs={12} key={index}>
+                              <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                <KeyboardDatePicker
+                                  margin="normal"
+                                  label="Date since covid symptoms"
+                                  format="MM/dd/yyyy"
+                                  value={values.dateSymptoms}
+                                  onChange={(val) =>
+                                    setFieldValue("dateSymptoms", val)
+                                  }
+                                />
+                              </MuiPickersUtilsProvider>
+                              <ErrorMessage
+                                name="dateSymptoms"
+                                component={ErrorAlert}
+                              />
+                            </Grid>
+                          ) : (
+                            <Grid item xs={12} key={index}>
+                              <FormControl>
+                                <FormLabel>{field.message}</FormLabel>
+                                <RadioGroup
+                                  name={field.name}
+                                  value={
+                                    values[field.name] === ""
+                                      ? -1
+                                      : +values[field.name]
+                                  }
+                                  onChange={handleChange(field.name)}
+                                >
+                                  {field.options.map((option, index) => (
+                                    <FormControlLabel
+                                      key={index}
+                                      control={<Radio />}
+                                      value={index}
+                                      label={option}
+                                    />
+                                  ))}
+                                </RadioGroup>
+                              </FormControl>
+                              <ErrorMessage
+                                name={field.name}
+                                component={ErrorAlert}
+                              />
+                            </Grid>
+                          )
+                        )}
+                        <div className={classes.actionsContainer}>
+                          <Button
+                            disabled={activeStep === 0}
+                            onClick={handleBack}
+                            className={classes.button}
+                          >
+                            Back
+                          </Button>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            type="submit"
+                            disabled={submitting}
+                            className={classes.button}
+                          >
+                            {activeStep === steps.length - 1
+                              ? "Register"
+                              : "Next"}
+                          </Button>
+                        </div>
+                      </Grid>
+                    </Form>
+                  )}
+                </Formik>
+              </StepContent>
+            </Step>
+          ))}
+        </Stepper>
         <Snackbar
           open={errOpen}
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
