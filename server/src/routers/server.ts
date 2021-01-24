@@ -10,6 +10,7 @@ import { superUserRouter } from "./su";
 import { userRouter } from "./user";
 import { authRouter } from "./auth";
 import { getAdminsRouter } from "./getAdmins";
+import { getPatientTrendRouter } from "./getPatientTrend";
 
 export const server = express();
 
@@ -29,3 +30,4 @@ server.use("/su", verifyUser, verifySuperUser, superUserRouter);
 server.use("/user", verifyUser, userRouter);
 server.use("/auth", authRouter);
 server.use("/admins", getAdminsRouter);
+server.use("/patient_trend", getPatientTrendRouter);
