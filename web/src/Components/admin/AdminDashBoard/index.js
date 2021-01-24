@@ -152,7 +152,7 @@ export const AdminDashBoard = ({ history }) => {
           color="secondary"
           style={{ marginBottom: "3vh" }}
         >
-          Patient Trend
+          Patient Trend of your center
         </Typography>
         <Bar
           data={{

@@ -20,3 +20,7 @@
 .popup-red {
   background-color: #ffd6cc !important;
 }
+
+.last-num-days {
+  width: 60px;
+}

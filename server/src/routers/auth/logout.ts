@@ -1,5 +1,5 @@
 import { Response, Router } from "express";
-import { logout } from "../../models/user/logout";
+import { logout } from "../../models/auth/logout";
 
 export const logoutRouter = Router();
 

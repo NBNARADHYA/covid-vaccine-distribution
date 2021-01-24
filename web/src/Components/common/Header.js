@@ -43,7 +43,7 @@ export const Header = () => {
             onClick={async () => {
               if (accessToken) {
                 setAccessToken(null);
-                await fetch(`${process.env.REACT_APP_SERVER}/logout`, {
+                await fetch(`${process.env.REACT_APP_SERVER}/auth/logout`, {
                   method: "POST",
                   credentials: "include",
                 });

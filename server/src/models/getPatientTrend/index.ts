@@ -1,9 +1,15 @@
 import { getConnection } from "typeorm";
 import { User } from "../../entity/User";
 
+interface PatientTrend {
+  count: number;
+  isVaccinated: boolean;
+  vaccinationDate: string;
+}
+
 export const getPatientTrend = async (
   lastNumDays?: number
-): Promise<boolean> => {
+): Promise<PatientTrend[]> => {
   const dbConnection = getConnection();
 
   try {
@@ -24,13 +30,13 @@ export const getPatientTrend = async (
         { currentDate: new Date().toDateString(), lastNumDays }
       );
     }
-    const result = await query
+    const result: PatientTrend[] = await query
       .groupBy(`"isVaccinated"`)
       .addGroupBy(`"vaccinationDate"`)
+      .orderBy(`TO_DATE("vaccinationDate", 'Dy Mon DD YYYY')`)
       .getRawMany();
 
-    console.log(result);
-    return true;
+    return result;
   } catch (error) {
     throw new Error(error);
   }
