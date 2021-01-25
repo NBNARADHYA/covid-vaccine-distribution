@@ -53,6 +53,7 @@ export const ViewAdmin = ({ history }) => {
   const [expanded, setExpanded] = useState(false);
   const query = useQuery();
   const [lastNumDays, setLastNumDays] = useState(30);
+  const [nextNumDays, setNextNumDays] = useState(30);
 
   const lat = parseFloat(query.get("lat"));
   const lng = parseFloat(query.get("lng"));
@@ -76,10 +77,13 @@ export const ViewAdmin = ({ history }) => {
   };
 
   useEffect(() => {
-    let url = `${process.env.REACT_APP_SERVER}/su/admins/${adminEmail}/registered_patients`;
+    let url = `${process.env.REACT_APP_SERVER}/su/admins/${adminEmail}/registered_patients?`;
 
     if (lastNumDays) {
-      url += `?lastNumDays=${lastNumDays}`;
+      url += `lastNumDays=${lastNumDays}&`;
+    }
+    if (nextNumDays) {
+      url += `nextNumDays=${nextNumDays}`;
     }
 
     fetch(url, {
@@ -108,7 +112,7 @@ export const ViewAdmin = ({ history }) => {
         console.log(err);
         await logout(setAccessToken);
       });
-  }, [adminEmail, setAccessToken, accessToken, lastNumDays]);
+  }, [adminEmail, setAccessToken, accessToken, lastNumDays, nextNumDays]);
 
   const scheduledOrVaccinatedPatients = {
     ...registeredPatients["scheduled"],
@@ -142,6 +146,19 @@ export const ViewAdmin = ({ history }) => {
               value={lastNumDays}
               size="small"
               onChange={(e) => setLastNumDays(e.target.value)}
+              className="last-num-days"
+            />
+            &nbsp;Days
+          </span>
+          <span
+            style={{ fontSize: "16px", color: "#808000", marginLeft: "40px" }}
+          >
+            Next&nbsp;
+            <TextField
+              variant="outlined"
+              value={nextNumDays}
+              size="small"
+              onChange={(e) => setNextNumDays(e.target.value)}
               className="last-num-days"
             />
             &nbsp;Days
@@ -198,6 +215,19 @@ export const ViewAdmin = ({ history }) => {
               value={lastNumDays}
               size="small"
               onChange={(e) => setLastNumDays(e.target.value)}
+              className="last-num-days"
+            />
+            &nbsp;Days
+          </span>
+          <span
+            style={{ fontSize: "16px", color: "#808000", marginLeft: "40px" }}
+          >
+            Next&nbsp;
+            <TextField
+              variant="outlined"
+              value={nextNumDays}
+              size="small"
+              onChange={(e) => setNextNumDays(e.target.value)}
               className="last-num-days"
             />
             &nbsp;Days
@@ -334,11 +364,11 @@ export const ViewAdmin = ({ history }) => {
         </Typography>
         <Typography variant="body1">{adminEmail}</Typography>
       </div>
-      <div style={{ marginBottom: " 3vh" }}>
+      <div style={{ paddingBottom: " 3vh" }}>
         <Typography
           variant="h5"
           color="secondary"
-          style={{ marginBottom: "1vh" }}
+          style={{ marginBottom: "2vh" }}
         >
           Location
         </Typography>

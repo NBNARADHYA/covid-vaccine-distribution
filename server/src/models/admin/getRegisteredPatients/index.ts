@@ -1,4 +1,4 @@
-import { getConnection } from "typeorm";
+import { Brackets, getConnection } from "typeorm";
 import { User } from "../../../entity/User";
 
 export interface PatientDetail {
@@ -18,7 +18,8 @@ interface ReturnType {
 
 export const getRegisteredPatients = async (
   adminEmail: string,
-  lastNumDays?: number
+  lastNumDays?: number,
+  nextNumDays?: number
 ): Promise<ReturnType> => {
   const dbConnection = getConnection();
 
@@ -35,10 +36,29 @@ export const getRegisteredPatients = async (
       .where(`user.adminEmail = :adminEmail`, { adminEmail })
       .andWhere(`user.vaccinationDate IS NOT NULL`);
 
-    if (lastNumDays) {
+    if (lastNumDays && nextNumDays) {
+      query = query.andWhere(
+        new Brackets((qb) =>
+          qb
+            .where(
+              `TO_DATE(:currentDate, 'Dy Mon DD YYYY') - TO_DATE("vaccinationDate", 'Dy Mon DD YYYY') BETWEEN 0 AND :lastNumDays`,
+              { currentDate: new Date().toDateString(), lastNumDays }
+            )
+            .orWhere(
+              `TO_DATE("vaccinationDate", 'Dy Mon DD YYYY') - TO_DATE(:currentDate, 'Dy Mon DD YYYY') BETWEEN 0 AND :nextNumDays`,
+              { currentDate: new Date().toDateString(), nextNumDays }
+            )
+        )
+      );
+    } else if (lastNumDays) {
       query = query.andWhere(
         `TO_DATE(:currentDate, 'Dy Mon DD YYYY') - TO_DATE("vaccinationDate", 'Dy Mon DD YYYY') <= :lastNumDays`,
         { currentDate: new Date().toDateString(), lastNumDays }
+      );
+    } else if (nextNumDays) {
+      query = query.andWhere(
+        `TO_DATE("vaccinationDate", 'Dy Mon DD YYYY') - TO_DATE(:currentDate, 'Dy Mon DD YYYY') <= :nextNumDays`,
+        { currentDate: new Date().toDateString(), nextNumDays }
       );
     }
 

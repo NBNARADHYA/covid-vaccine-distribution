@@ -6,11 +6,12 @@ export const getRegisteredPatientsRouter = Router();
 getRegisteredPatientsRouter.get(
   "/",
   async (req: Request, res: Response): Promise<Response> => {
-    const { lastNumDays } = req.query;
+    const { lastNumDays, nextNumDays } = req.query;
     try {
       const patients = await getRegisteredPatients(
         req.user.email,
-        parseInt(lastNumDays as string)
+        parseInt(lastNumDays as string),
+        parseInt(nextNumDays as string)
       );
       return res.status(200).send({ patients });
     } catch (error) {

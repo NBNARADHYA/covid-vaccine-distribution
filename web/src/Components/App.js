@@ -1,13 +1,16 @@
 import { BrowserRouter as Router } from "react-router-dom";
 import { AccessTokenProvider } from "../Contexts/AccessToken";
 import Routes from "./Routes";
-import "./app.css";
+import "./App.css";
+import { Layout } from "../Layout";
 
 const App = () => {
   return (
     <Router>
       <AccessTokenProvider>
-        <Routes />
+        <Layout>
+          <Routes />
+        </Layout>
       </AccessTokenProvider>
     </Router>
   );

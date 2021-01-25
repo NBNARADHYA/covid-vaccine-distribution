@@ -42,6 +42,7 @@ export const SUDashBoard = ({ history }) => {
   });
   const [patients, setPatients] = useState([]);
   const [lastNumDays, setLastNumDays] = useState(30);
+  const [nextNumDays, setNextNumDays] = useState(30);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [errOpen, setErrOpen] = useState(false);
   const [error, setError] = useState(null);
@@ -66,15 +67,18 @@ export const SUDashBoard = ({ history }) => {
   }, [accessToken, setAccessToken]);
 
   useEffect(() => {
-    let url = `${process.env.REACT_APP_SERVER}/patient_trend`;
+    let url = `${process.env.REACT_APP_SERVER}/patient_trend?`;
     if (lastNumDays) {
-      url += `?lastNumDays=${lastNumDays}`;
+      url += `lastNumDays=${lastNumDays}&`;
+    }
+    if (nextNumDays) {
+      url += `nextNumDays=${nextNumDays}`;
     }
     fetch(url)
       .then((res) => res.json())
       .then((res) => setPatients(res.patients))
       .catch(console.error);
-  }, [lastNumDays]);
+  }, [lastNumDays, nextNumDays]);
 
   const patientTrendDates = useMemo(() => {
     const map = {},
@@ -182,34 +186,34 @@ export const SUDashBoard = ({ history }) => {
                       Register and Dispatch
                     </Button>
                   </DialogActions>
-                  <Snackbar
-                    open={success}
-                    anchorOrigin={{ vertical: "top", horizontal: "center" }}
-                    autoHideDuration={6000}
-                    onClose={() => setSuccess(false)}
-                  >
-                    <Alert onClose={() => setSuccess(false)} severity="success">
-                      Your details have been submitted successfully ! You will
-                      be notified once vaccination is scheduled for you !
-                    </Alert>
-                  </Snackbar>
-                  <Snackbar
-                    open={errOpen}
-                    anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-                    autoHideDuration={6000}
-                    onClose={() => setErrOpen(false)}
-                  >
-                    <Alert onClose={() => setErrOpen(false)} severity="error">
-                      {error}
-                    </Alert>
-                  </Snackbar>
                 </Form>
               )}
             </Formik>
           </Dialog>
+          <Snackbar
+            open={success}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            autoHideDuration={6000}
+            onClose={() => setSuccess(false)}
+          >
+            <Alert onClose={() => setSuccess(false)} severity="success">
+              Vaccines have be successfully registered and ready to be
+              dispatched ! Admins can now schedule time slots for those patients
+            </Alert>
+          </Snackbar>
+          <Snackbar
+            open={errOpen}
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            autoHideDuration={6000}
+            onClose={() => setErrOpen(false)}
+          >
+            <Alert onClose={() => setErrOpen(false)} severity="error">
+              {error}
+            </Alert>
+          </Snackbar>
         </span>
       </Typography>
-      <div>
+      <div style={{ marginBottom: "3vh" }}>
         <Typography
           variant="h5"
           color="secondary"
@@ -225,6 +229,19 @@ export const SUDashBoard = ({ history }) => {
               value={lastNumDays}
               size="small"
               onChange={(e) => setLastNumDays(e.target.value)}
+              className="last-num-days"
+            />
+            &nbsp;Days
+          </span>
+          <span
+            style={{ fontSize: "16px", color: "#808000", marginLeft: "40px" }}
+          >
+            Next&nbsp;
+            <TextField
+              variant="outlined"
+              value={nextNumDays}
+              size="small"
+              onChange={(e) => setNextNumDays(e.target.value)}
               className="last-num-days"
             />
             &nbsp;Days
@@ -289,13 +306,13 @@ export const SUDashBoard = ({ history }) => {
           <Typography variant="body1">{email}</Typography>
         </div>
       </div>
-      <div style={{ marginBottom: " 3vh" }}>
+      <div style={{ paddingBottom: " 5vh" }}>
         <Typography
           variant="h5"
           color="secondary"
-          style={{ marginBottom: "1vh" }}
+          style={{ marginBottom: "2vh" }}
         >
-          Vaccination centres throughout India
+          Vaccination centres accross India
         </Typography>
         <ReactMapGL
           {...viewport}
@@ -340,11 +357,11 @@ export const SUDashBoard = ({ history }) => {
               closeButton={false}
             >
               <div className="popup" onClick={() => setSelectedAdmin(null)}>
-                <Typography variant="body1">
+                <Typography variant="body1" color="primary">
                   <b style={{ marginRight: "7px" }}>Admin Name</b>
                   {selectedAdmin.firstName + " " + selectedAdmin.lastName}
                 </Typography>
-                <Typography variant="body1">
+                <Typography variant="body1" color="primary">
                   <b style={{ marginRight: "7px" }}>Email</b>
                   <a
                     style={{
@@ -353,7 +370,7 @@ export const SUDashBoard = ({ history }) => {
                     }}
                     href={`mailto:${selectedAdmin.email}`}
                   >
-                    {email}
+                    {selectedAdmin.email}
                   </a>
                 </Typography>
                 <Button

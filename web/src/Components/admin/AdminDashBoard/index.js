@@ -66,6 +66,7 @@ export const AdminDashBoard = ({ history }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
   const [lastNumDays, setLastNumDays] = useState(30);
+  const [nextNumDays, setNextNumDays] = useState(30);
 
   const [viewport, setViewport] = useState({
     latitude: coordinates[0],
@@ -93,10 +94,13 @@ export const AdminDashBoard = ({ history }) => {
   };
 
   useEffect(() => {
-    let url = `${process.env.REACT_APP_SERVER}/admin/registered_patients`;
+    let url = `${process.env.REACT_APP_SERVER}/admin/registered_patients?`;
 
     if (lastNumDays) {
-      url += `?lastNumDays=${lastNumDays}`;
+      url += `lastNumDays=${lastNumDays}&`;
+    }
+    if (nextNumDays) {
+      url += `nextNumDays=${nextNumDays}`;
     }
 
     fetch(url, {
@@ -123,7 +127,7 @@ export const AdminDashBoard = ({ history }) => {
         setRegisteredPatients(newRegisteredPatients);
       })
       .catch(async () => await logout(setAccessToken));
-  }, [accessToken, history, setAccessToken, lastNumDays]);
+  }, [accessToken, history, setAccessToken, lastNumDays, nextNumDays]);
 
   const scheduledOrVaccinatedPatients = {
     ...registeredPatients["scheduled"],
@@ -166,6 +170,19 @@ export const AdminDashBoard = ({ history }) => {
               value={lastNumDays}
               size="small"
               onChange={(e) => setLastNumDays(e.target.value)}
+              className="last-num-days"
+            />
+            &nbsp;Days
+          </span>
+          <span
+            style={{ fontSize: "16px", color: "#808000", marginLeft: "40px" }}
+          >
+            Next&nbsp;
+            <TextField
+              variant="outlined"
+              value={nextNumDays}
+              size="small"
+              onChange={(e) => setNextNumDays(e.target.value)}
               className="last-num-days"
             />
             &nbsp;Days
@@ -222,6 +239,19 @@ export const AdminDashBoard = ({ history }) => {
               value={lastNumDays}
               size="small"
               onChange={(e) => setLastNumDays(e.target.value)}
+              className="last-num-days"
+            />
+            &nbsp;Days
+          </span>
+          <span
+            style={{ fontSize: "16px", color: "#808000", marginLeft: "40px" }}
+          >
+            Next&nbsp;
+            <TextField
+              variant="outlined"
+              value={nextNumDays}
+              size="small"
+              onChange={(e) => setNextNumDays(e.target.value)}
               className="last-num-days"
             />
             &nbsp;Days
@@ -387,11 +417,11 @@ export const AdminDashBoard = ({ history }) => {
           <Typography variant="body1">{email}</Typography>
         </div>
       </div>
-      <div style={{ marginBottom: " 3vh" }}>
+      <div style={{ paddingBottom: " 3vh" }}>
         <Typography
           variant="h5"
           color="secondary"
-          style={{ marginBottom: "1vh" }}
+          style={{ marginBottom: "2vh" }}
         >
           Location
         </Typography>

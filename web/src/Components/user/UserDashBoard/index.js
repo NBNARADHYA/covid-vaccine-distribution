@@ -105,7 +105,7 @@ export const UserDashBoard = ({ history }) => {
           <Typography variant="body1">{email}</Typography>
         </div>
       </div>
-      <div style={{ marginBottom: " 3vh" }}>
+      <div style={{ paddingBottom: " 3vh" }}>
         <div style={{ marginBottom: "3vh" }}>
           <Typography
             variant="h5"

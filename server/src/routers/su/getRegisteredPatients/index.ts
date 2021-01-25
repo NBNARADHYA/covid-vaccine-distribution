@@ -7,14 +7,15 @@ getRegisteredPatientsRouter.get(
   "/",
   async (req: Request, res: Response): Promise<Response> => {
     const adminEmail: string = req.params.adminEmail as any;
-    const { lastNumDays } = req.query;
+    const { lastNumDays, nextNumDays } = req.query;
 
     if (!adminEmail)
       return res.status(400).send({ error: "adminEmail required" });
     try {
       const patients = await getRegisteredPatients(
         adminEmail,
-        parseInt(lastNumDays as string)
+        parseInt(lastNumDays as string),
+        parseInt(nextNumDays as string)
       );
       return res.status(200).send({ patients });
     } catch (error) {
