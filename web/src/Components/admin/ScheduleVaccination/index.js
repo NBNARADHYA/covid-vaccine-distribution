@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   makeStyles,
   Container,
@@ -10,6 +10,11 @@ import {
   CircularProgress,
   Card,
   Popover,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@material-ui/core";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { ErrorAlert } from "../../common/ErrorAlert";
@@ -62,6 +67,7 @@ export const SchedulePatientsForVaccination = ({ history }) => {
   const [loading, setLoading] = useState(true);
   const [success, setSuccess] = useState(false);
   const [nonScheduledPatients, setNonScheduledPatients] = useState({});
+  const [dialogOpen, setDialogOpen] = useState(false);
   const {
     accessToken,
     user: { isAdmin },
@@ -75,6 +81,8 @@ export const SchedulePatientsForVaccination = ({ history }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleDialogClose = useCallback(() => setDialogOpen(false), []);
 
   if (!accessToken || !isAdmin) history.push("/auth/login");
 
@@ -216,118 +224,105 @@ export const SchedulePatientsForVaccination = ({ history }) => {
             The following patients have to be scheduled time slots
           </span>
           <span>
-            <Button variant="contained" color="primary" onClick={handleClick}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setDialogOpen(true)}
+            >
               Schedule Time slots
             </Button>
-            <Popover
-              open={Boolean(anchorEl)}
-              anchorEl={anchorEl}
-              onClose={handleClose}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "center",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "center",
-              }}
-            >
-              <div className={classes.form}>
-                <Formik
-                  initialValues={{
-                    patientsPerSlot: "",
-                  }}
-                  validate={({ patientsPerSlot }) => {
-                    const errors = {};
+            <Dialog open={dialogOpen} onClose={handleDialogClose}>
+              <DialogTitle>Schedule vaccination time slots</DialogTitle>
+              <Formik
+                initialValues={{
+                  patientsPerSlot: "",
+                }}
+                validate={({ patientsPerSlot }) => {
+                  const errors = {};
 
-                    if (!patientsPerSlot) {
-                      errors.patientsPerSlot = "patientsPerSlot required";
-                    } else if (isNaN(patientsPerSlot) || patientsPerSlot <= 0)
-                      errors.patientsPerSlot = "Invalid patientsPerSlot";
+                  if (!patientsPerSlot) {
+                    errors.patientsPerSlot = "patientsPerSlot required";
+                  } else if (isNaN(patientsPerSlot) || patientsPerSlot <= 0)
+                    errors.patientsPerSlot = "Invalid patientsPerSlot";
 
-                    return errors;
-                  }}
-                  onSubmit={async ({ patientsPerSlot }, { setSubmitting }) => {
-                    setSubmitting(true);
-                    try {
-                      let res = await fetch(
-                        `${process.env.REACT_APP_SERVER}/admin/schedule_vaccination`,
-                        {
-                          method: "POST",
-                          headers: {
-                            "Content-Type": "application/json",
-                            authorization: `Bearer ${accessToken}`,
-                          },
-                          body: JSON.stringify({
-                            patientsPerSlot: parseInt(patientsPerSlot),
-                          }),
-                        }
-                      );
-                      res = await res.json();
-                      if (res.error) {
-                        setError(res.error);
-                        setErrOpen(true);
-                      } else {
-                        const patients = {};
-                        res.scheduledPatients.forEach((patient) => {
-                          const reg = patients[patient.vaccinationDate] || [];
-                          reg.push({ ...patient });
-                          patients[patient.vaccinationDate] = reg;
-                        });
-                        setSuccess(patients);
+                  return errors;
+                }}
+                onSubmit={async ({ patientsPerSlot }, { setSubmitting }) => {
+                  setSubmitting(true);
+                  try {
+                    let res = await fetch(
+                      `${process.env.REACT_APP_SERVER}/admin/schedule_vaccination`,
+                      {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                          authorization: `Bearer ${accessToken}`,
+                        },
+                        body: JSON.stringify({
+                          patientsPerSlot: parseInt(patientsPerSlot),
+                        }),
                       }
-                    } catch (error) {
-                      setError(error);
+                    );
+                    res = await res.json();
+                    if (res.error) {
+                      setError(res.error);
                       setErrOpen(true);
-                    } finally {
-                      setSubmitting(false);
+                    } else {
+                      const patients = {};
+                      res.scheduledPatients.forEach((patient) => {
+                        const reg = patients[patient.vaccinationDate] || [];
+                        reg.push({ ...patient });
+                        patients[patient.vaccinationDate] = reg;
+                      });
+                      setSuccess(patients);
                     }
-                  }}
-                >
-                  {({ isSubmitting }) => (
-                    <Form>
-                      <Grid container direction="column" spacing={3}>
-                        <Grid item xs={12}>
-                          <Field
-                            name="patientsPerSlot"
-                            as={TextField}
-                            label="#patients vaccinated per slot"
-                            variant="outlined"
-                          />
-                          <ErrorMessage
-                            name="patientsPerSlot"
-                            component={ErrorAlert}
-                          />
-                        </Grid>
-                        {/* <Grid item xs={12}>
-                <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                  <KeyboardDatePicker
-                    margin="normal"
-                    label="Date of vaccination"
-                    format="MM/dd/yyyy"
-                    value={values.dateOfVaccination}
-                    onChange={(val) => setFieldValue("dateOfVaccination", val)}
-                  />
-                </MuiPickersUtilsProvider>
-                <ErrorMessage name="dateOfVaccination" component={ErrorAlert} />
-              </Grid> */}
-                        <Grid item xs={12}>
-                          <Button
-                            type="submit"
-                            size="small"
-                            variant="contained"
-                            color="primary"
-                            disabled={isSubmitting}
-                          >
-                            Schedule
-                          </Button>
-                        </Grid>
-                      </Grid>
-                    </Form>
-                  )}
-                </Formik>
-              </div>
-            </Popover>
+                  } catch (error) {
+                    setError(error);
+                    setErrOpen(true);
+                  } finally {
+                    setSubmitting(false);
+                  }
+                }}
+              >
+                {({ isSubmitting }) => (
+                  <Form>
+                    <DialogContent>
+                      <DialogContentText>
+                        To schedule time slots for patients for whom vaccines
+                        have been dispatched by the vaccination production
+                        center, please enter the average number patients who are
+                        vaccinated in your center in a hour long time slot.
+                      </DialogContentText>
+                      <Field
+                        name="patientsPerSlot"
+                        as={TextField}
+                        label="Vaccination rate"
+                        variant="outlined"
+                        fullWidth
+                        autoFocus
+                        margin="dense"
+                      />
+                      <ErrorMessage
+                        name="patientsPerSlot"
+                        component={ErrorAlert}
+                      />
+                    </DialogContent>
+                    <DialogActions>
+                      <Button onClick={handleDialogClose} color="primary">
+                        Cancel
+                      </Button>
+                      <Button
+                        type="submit"
+                        color="primary"
+                        disabled={isSubmitting}
+                      >
+                        Schedule
+                      </Button>
+                    </DialogActions>
+                  </Form>
+                )}
+              </Formik>
+            </Dialog>
           </span>
         </Typography>
         <Grid

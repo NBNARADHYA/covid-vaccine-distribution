@@ -19,7 +19,10 @@ const useStyles = makeStyles((theme) => ({
   },
   link: {
     textDecoration: "none",
-    color: "white",
+    color: "black",
+  },
+  login: {
+    fontSize: "20px",
   },
 }));
 
@@ -33,13 +36,14 @@ export const Header = () => {
     <div className={classes.root}>
       <AppBar position="static" color="primary">
         <Toolbar>
-          <Typography variant="h6" className={classes.title}>
+          <Typography variant="h4" className={classes.title}>
             <Link className={classes.link} to="/">
-              Covid Vaccine Distribution
+              Team Infinity
             </Link>
           </Typography>
           <Button
             color="inherit"
+            className={classes.login}
             onClick={async () => {
               if (accessToken) {
                 setAccessToken(null);
@@ -47,8 +51,10 @@ export const Header = () => {
                   method: "POST",
                   credentials: "include",
                 });
+                history.push("/");
+              } else {
+                history.push("/auth/login");
               }
-              history.push("/auth/login");
             }}
           >
             {accessToken

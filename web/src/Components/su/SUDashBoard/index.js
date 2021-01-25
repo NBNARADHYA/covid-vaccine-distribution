@@ -93,7 +93,7 @@ export const SUDashBoard = ({ history }) => {
 
   return (
     <Container style={{ paddingTop: "3vh" }}>
-      <Typography variant="h4" color="primary" style={{ marginBottom: "3vh" }}>
+      <Typography variant="h4" color="primary" style={{ marginBottom: "4vh" }}>
         <span style={{ marginRight: "30px" }}>Super User Dashboard</span>
         <span>
           <span style={{ fontSize: "15px", color: "#00b33c" }}>
@@ -213,7 +213,7 @@ export const SUDashBoard = ({ history }) => {
           </Snackbar>
         </span>
       </Typography>
-      <div style={{ marginBottom: "3vh" }}>
+      <div style={{ marginBottom: "5vh" }}>
         <Typography
           variant="h5"
           color="secondary"
@@ -271,11 +271,27 @@ export const SUDashBoard = ({ history }) => {
               ],
             }}
             options={{
+              legend: {
+                labels: {
+                  fontColor: "white",
+                  fontSize: 18,
+                },
+              },
               scales: {
                 yAxes: [
                   {
                     ticks: {
+                      fontColor: "white",
+                      fontSize: 18,
                       beginAtZero: true,
+                    },
+                  },
+                ],
+                xAxes: [
+                  {
+                    ticks: {
+                      fontColor: "white",
+                      fontSize: 14,
                     },
                   },
                 ],
@@ -291,7 +307,7 @@ export const SUDashBoard = ({ history }) => {
             color="secondary"
             style={{ marginBottom: "1vh" }}
           >
-            Super user's Name
+            Name
           </Typography>
           <Typography variant="body1">{firstName + " " + lastName}</Typography>
         </div>
@@ -301,7 +317,7 @@ export const SUDashBoard = ({ history }) => {
             color="secondary"
             style={{ marginBottom: "1vh" }}
           >
-            Super user's Email
+            Email
           </Typography>
           <Typography variant="body1">{email}</Typography>
         </div>

@@ -107,19 +107,21 @@ export const RegisterForVaccination = ({ history }) => {
   return (
     <div className={classes.mainDiv}>
       <div className={classes.formHeaderDiv}>
-        <Typography
-          variant="overline"
-          color="primary"
-          className={classes.formHeader}
-        >
+        <Typography variant="h3" color="primary" className={classes.formHeader}>
           Register for vaccination
         </Typography>
       </div>
       <Container>
-        <Stepper activeStep={activeStep} orientation="vertical">
+        <Stepper
+          activeStep={activeStep}
+          orientation="vertical"
+          style={{ backgroundColor: "black" }}
+        >
           {steps.map((step, index) => (
             <Step key={step.label}>
-              <StepLabel>{step.label}</StepLabel>
+              <StepLabel style={{ marginBottom: "2vh" }}>
+                {step.label}
+              </StepLabel>
               <StepContent>
                 <Formik
                   initialValues={{ ...step.initialValues, ...formData[index] }}

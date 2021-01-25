@@ -1,4 +1,5 @@
 import { CssBaseline, ThemeProvider } from "@material-ui/core";
+import { Footer } from "../Components/common/Footer";
 import { Header } from "../Components/common/Header";
 import { theme, useStyle } from "./styles";
 
@@ -7,16 +8,17 @@ export const Layout = ({ children }) => {
 
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
+      {/* <CssBaseline /> */}
       <Header />
       <div
         style={{
-          minHeight: "98vh",
+          minHeight: "94vh",
           position: "relative",
         }}
         className={classes.root}
       >
-        {children}
+        <div className="content-wrap">{children}</div>
+        <Footer />
       </div>
     </ThemeProvider>
   );

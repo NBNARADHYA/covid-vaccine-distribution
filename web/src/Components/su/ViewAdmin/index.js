@@ -189,11 +189,27 @@ export const ViewAdmin = ({ history }) => {
             ],
           }}
           options={{
+            legend: {
+              labels: {
+                fontColor: "white",
+                fontSize: 18,
+              },
+            },
             scales: {
               yAxes: [
                 {
                   ticks: {
+                    fontColor: "white",
+                    fontSize: 18,
                     beginAtZero: true,
+                  },
+                },
+              ],
+              xAxes: [
+                {
+                  ticks: {
+                    fontColor: "white",
+                    fontSize: 14,
                   },
                 },
               ],
