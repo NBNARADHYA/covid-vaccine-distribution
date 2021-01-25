@@ -5,15 +5,16 @@ import { refreshToken } from "../Components/utils/refreshToken";
 const AccessTokenContext = createContext();
 
 const initialAccessToken = localStorage.getItem("accessToken");
+const unauthorizedUser = {
+  isAdmin: false,
+  isSuperUser: false,
+  isProfileAdded: false,
+  exp: Date.now() - 1000,
+  vaccinationDate: null,
+};
 const initialPayload = initialAccessToken
   ? jwtDecode(initialAccessToken)
-  : {
-      isAdmin: false,
-      isSuperUser: false,
-      isProfileAdded: false,
-      exp: Date.now() - 1000,
-      vaccinationDate: null,
-    };
+  : unauthorizedUser;
 
 const AccessTokenProvider = ({ children }) => {
   const [accessToken, setAccessToken] = useState(initialAccessToken);
@@ -22,6 +23,7 @@ const AccessTokenProvider = ({ children }) => {
   useEffect(() => {
     if (!accessToken) {
       localStorage.removeItem("accessToken");
+      setUser(unauthorizedUser);
     } else {
       const payload = jwtDecode(accessToken);
       setUser(payload);

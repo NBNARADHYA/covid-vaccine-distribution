@@ -17,7 +17,8 @@ interface ReturnType {
 }
 
 export const getRegisteredPatients = async (
-  adminEmail: string
+  adminEmail: string,
+  lastNumDays?: number
 ): Promise<ReturnType> => {
   const dbConnection = getConnection();
 
@@ -28,14 +29,24 @@ export const getRegisteredPatients = async (
   };
 
   try {
-    const patientsData = await dbConnection
+    let query = dbConnection
       .getRepository(User)
       .createQueryBuilder("user")
       .where(`user.adminEmail = :adminEmail`, { adminEmail })
-      .andWhere(`user.vaccinationDate IS NOT NULL`)
-      .orderBy(`user.vaccinationDate`, "ASC")
-      .orderBy(`user.covidVulnerabilityScore`, "DESC")
-      .getMany();
+      .andWhere(`user.vaccinationDate IS NOT NULL`);
+
+    if (lastNumDays) {
+      query = query.andWhere(
+        `TO_DATE(:currentDate, 'Dy Mon DD YYYY') - TO_DATE("vaccinationDate", 'Dy Mon DD YYYY') <= :lastNumDays`,
+        { currentDate: new Date().toDateString(), lastNumDays }
+      );
+    }
+
+    query = query
+      .orderBy(`TO_DATE(user.vaccinationDate, 'Dy Mon DD YYYY')`)
+      .addOrderBy(`user.covidVulnerabilityScore`, "DESC");
+
+    const patientsData = await query.getMany();
 
     patientsData.forEach(
       ({

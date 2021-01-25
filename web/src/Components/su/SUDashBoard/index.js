@@ -18,6 +18,7 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import { ErrorAlert } from "../../common/ErrorAlert";
 import { Alert } from "@material-ui/lab";
 import { isTokenExpired, refreshToken } from "../../utils/refreshToken";
+import { logout } from "../../utils/logout";
 
 export const SUDashBoard = ({ history }) => {
   const {
@@ -47,13 +48,22 @@ export const SUDashBoard = ({ history }) => {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_SERVER}/admins`)
+    fetch(`${process.env.REACT_APP_SERVER}/su/admins`, {
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    })
       .then((res) => res.json())
-      .then((res) => {
-        setAdmins(res.admins);
+      .then(async (res) => {
+        if (res.error) {
+          if (!(await refreshToken(setAccessToken)))
+            throw new Error("Not authorized");
+        } else {
+          setAdmins(res.admins);
+        }
       })
-      .catch(console.error);
-  }, []);
+      .catch(async () => await logout(setAccessToken));
+  }, [accessToken, setAccessToken]);
 
   useEffect(() => {
     let url = `${process.env.REACT_APP_SERVER}/patient_trend`;
@@ -80,9 +90,7 @@ export const SUDashBoard = ({ history }) => {
   return (
     <Container style={{ paddingTop: "3vh" }}>
       <Typography variant="h4" color="primary" style={{ marginBottom: "3vh" }}>
-        <span style={{ marginRight: "30px" }}>
-          Vaccination Production Center Details
-        </span>
+        <span style={{ marginRight: "30px" }}>Super User Dashboard</span>
         <span>
           <span style={{ fontSize: "15px", color: "#00b33c" }}>
             New batch of vaccines produced ?
@@ -113,7 +121,7 @@ export const SUDashBoard = ({ history }) => {
                   isTokenExpired(exp) &&
                   !(await refreshToken(setAccessToken))
                 )
-                  history.push("/auth/login");
+                  await logout(setAccessToken);
                 try {
                   let res = await fetch(
                     `${process.env.REACT_APP_SERVER}/su/register_and_dispatch_vaccines`,
@@ -327,9 +335,11 @@ export const SUDashBoard = ({ history }) => {
             <Popup
               latitude={selectedAdmin.coordinates[0]}
               longitude={selectedAdmin.coordinates[1]}
-              onClose={() => setSelectedAdmin(null)}
+              closeOnclick={false}
+              captureClick={true}
+              closeButton={false}
             >
-              <div className="popup">
+              <div className="popup" onClick={() => setSelectedAdmin(null)}>
                 <Typography variant="body1">
                   <b style={{ marginRight: "7px" }}>Admin Name</b>
                   {selectedAdmin.firstName + " " + selectedAdmin.lastName}
@@ -346,6 +356,19 @@ export const SUDashBoard = ({ history }) => {
                     {email}
                   </a>
                 </Typography>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  onClick={() =>
+                    history.push(
+                      `/su/admins/${selectedAdmin.email}?lat=${selectedAdmin.coordinates[0]}&lng=${selectedAdmin.coordinates[1]}`
+                    )
+                  }
+                  style={{ marginTop: "5px" }}
+                >
+                  View admin
+                </Button>
               </div>
             </Popup>
           )}

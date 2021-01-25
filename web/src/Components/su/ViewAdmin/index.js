@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -8,19 +8,19 @@ import {
   Grid,
   makeStyles,
   Typography,
-  Button,
+  IconButton,
   TextField,
 } from "@material-ui/core";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ReactMapGL, { Marker, Popup } from "react-map-gl";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
 import { Bar } from "react-chartjs-2";
-import { useContext, useEffect, useState } from "react";
-import { AccessTokenContext } from "../../../Contexts/AccessToken";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { vaccinationStateDetails } from "./vaccinationStateDetails";
+import { useParams } from "react-router-dom";
+import { AccessTokenContext } from "../../../Contexts/AccessToken";
 import { logout } from "../../utils/logout";
 import { refreshToken } from "../../utils/refreshToken";
+import { vaccinationStateDetails } from "../../admin/AdminDashBoard/vaccinationStateDetails";
+import { useQuery } from "../../hooks/useQuery";
 
 const useStyles = makeStyles((theme) => ({
   submitBtn: {
@@ -46,68 +46,50 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const AdminDashBoard = ({ history }) => {
-  const {
-    user: {
-      firstName,
-      lastName,
-      email,
-      location: { coordinates },
-    },
-    accessToken,
-    setAccessToken,
-  } = useContext(AccessTokenContext);
+export const ViewAdmin = ({ history }) => {
+  const classes = useStyles();
+  const { adminEmail } = useParams();
+  const { accessToken, setAccessToken } = useContext(AccessTokenContext);
+  const [expanded, setExpanded] = useState(false);
+  const query = useQuery();
+  const [lastNumDays, setLastNumDays] = useState(30);
+
+  const lat = parseFloat(query.get("lat"));
+  const lng = parseFloat(query.get("lng"));
+
   const [registeredPatients, setRegisteredPatients] = useState({
     scheduled: {},
     notScheduled: {},
     vaccinated: {},
   });
-  const [expanded, setExpanded] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const classes = useStyles();
-  const [lastNumDays, setLastNumDays] = useState(30);
 
   const [viewport, setViewport] = useState({
-    latitude: coordinates[0],
-    longitude: coordinates[1],
+    latitude: lat,
+    longitude: lng,
     zoom: 6,
   });
 
   const [selectedPatient, setSelectedPatient] = useState(null);
-
-  const handleActionsClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleActionsSelect = () => {
-    setAnchorEl(null);
-    history.push("/admin/schedule_patients_for_vaccination");
-  };
-
-  const handleActionsClose = () => {
-    setAnchorEl(null);
-  };
 
   const handleChange = (state) => (_, isExpanded) => {
     setExpanded(isExpanded ? state : false);
   };
 
   useEffect(() => {
-    let url = `${process.env.REACT_APP_SERVER}/admin/registered_patients`;
+    let url = `${process.env.REACT_APP_SERVER}/su/admins/${adminEmail}/registered_patients`;
 
     if (lastNumDays) {
       url += `?lastNumDays=${lastNumDays}`;
     }
 
     fetch(url, {
-      method: "GET",
       headers: {
         authorization: `Bearer ${accessToken}`,
       },
     })
       .then((res) => res.json())
       .then(async (res) => {
-        if (res.error && (await refreshToken(setAccessToken))) {
+        if (res.error && !(await refreshToken(setAccessToken))) {
           return await logout(setAccessToken);
         }
         const newRegisteredPatients = {};
@@ -122,8 +104,11 @@ export const AdminDashBoard = ({ history }) => {
         });
         setRegisteredPatients(newRegisteredPatients);
       })
-      .catch(async () => await logout(setAccessToken));
-  }, [accessToken, history, setAccessToken, lastNumDays]);
+      .catch(async (err) => {
+        console.log(err);
+        await logout(setAccessToken);
+      });
+  }, [adminEmail, setAccessToken, accessToken, lastNumDays]);
 
   const scheduledOrVaccinatedPatients = {
     ...registeredPatients["scheduled"],
@@ -132,23 +117,14 @@ export const AdminDashBoard = ({ history }) => {
 
   return (
     <Container style={{ paddingTop: "3vh" }}>
+      <div style={{ marginBottom: "2vh" }}>
+        <IconButton onClick={() => history.push("/su/dashboard")}>
+          <ArrowBackIcon fontSize="small" />
+          &nbsp; Dashboard
+        </IconButton>
+      </div>
       <Typography variant="h4" color="primary" style={{ marginBottom: "3vh" }}>
-        <span style={{ marginRight: "30px" }}>Admin Dashboard</span>
-        <span>
-          <Button variant="contained" onClick={handleActionsClick}>
-            Admin Actions
-          </Button>
-          <Menu
-            anchorEl={anchorEl}
-            keepMounted
-            open={Boolean(anchorEl)}
-            onClose={handleActionsClose}
-          >
-            <MenuItem onClick={handleActionsSelect}>
-              Schedule Patients for vaccination
-            </MenuItem>
-          </Menu>
-        </span>
+        Vaccination Center Details
       </Typography>
       <div style={{ marginBottom: "3vh" }}>
         <Typography
@@ -157,7 +133,7 @@ export const AdminDashBoard = ({ history }) => {
           style={{ marginBottom: "3vh" }}
         >
           <span style={{ marginRight: "30px" }}>
-            Patient Trend of your center
+            Patient Trend of this center
           </span>
           <span style={{ fontSize: "16px", color: "#5c5c8a" }}>
             Last&nbsp;
@@ -249,23 +225,6 @@ export const AdminDashBoard = ({ history }) => {
                 justify="center"
                 alignItems="center"
               >
-                {state === "notScheduled" &&
-                  Boolean(Object.keys(registeredPatients[state]).length) && (
-                    <Grid item>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        size="small"
-                        onClick={() =>
-                          history.push(
-                            "/admin/schedule_patients_for_vaccination"
-                          )
-                        }
-                      >
-                        Schedule time slots for these patients
-                      </Button>
-                    </Grid>
-                  )}
                 {Object.entries(registeredPatients[state]).map(
                   ([date, patients]) => (
                     <Grid
@@ -366,26 +325,14 @@ export const AdminDashBoard = ({ history }) => {
         ))}
       </div>
       <div style={{ marginBottom: "5vh" }}>
-        <div style={{ marginBottom: "2vh" }}>
-          <Typography
-            variant="h5"
-            color="secondary"
-            style={{ marginBottom: "1vh" }}
-          >
-            Admin's Name
-          </Typography>
-          <Typography variant="body1">{firstName + " " + lastName}</Typography>
-        </div>
-        <div style={{ marginBottom: "2vh" }}>
-          <Typography
-            variant="h5"
-            color="secondary"
-            style={{ marginBottom: "1vh" }}
-          >
-            Admin's Email
-          </Typography>
-          <Typography variant="body1">{email}</Typography>
-        </div>
+        <Typography
+          variant="h5"
+          color="secondary"
+          style={{ marginBottom: "1vh" }}
+        >
+          Admin's Email
+        </Typography>
+        <Typography variant="body1">{adminEmail}</Typography>
       </div>
       <div style={{ marginBottom: " 3vh" }}>
         <Typography
@@ -403,7 +350,7 @@ export const AdminDashBoard = ({ history }) => {
           mapboxApiAccessToken={process.env.REACT_APP_MAP_TOKEN}
           mapStyle={process.env.REACT_APP_MAP_STYLE_URL}
         >
-          <Marker latitude={coordinates[0]} longitude={coordinates[1]}>
+          <Marker latitude={lat} longitude={lng}>
             <button className="marker-btn">
               <img src="/vaccinationIcon.webp" alt="Vaccination center" />
             </button>
