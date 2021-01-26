@@ -45,10 +45,22 @@ export const registerAndDispatchVaccines = async (
           ) "nearestAdmin" 
         ON TRUE
         WHERE
-          "patient"."isVaccinated" = $4 AND "patient"."vaccinationDate" IS NULL AND "patient"."isAdmin" = $5
+          "patient"."isVaccinated" = $4 AND 
+          "patient"."vaccinationDate" IS NULL AND 
+          "patient"."isAdmin" = $5 AND
+          "patient"."isSuperUser" = $6 AND
+          "patient"."covidVulnerabilityScore" IS NOT NULL
         ORDER BY "patient"."covidVulnerabilityScore" DESC
-        LIMIT $6`,
-      [JSON.stringify(suLocation), true, false, false, false, numVaccines]
+        LIMIT $7`,
+      [
+        JSON.stringify(suLocation),
+        true,
+        false,
+        false,
+        false,
+        false,
+        numVaccines,
+      ]
     );
 
     if (!patients.length) {

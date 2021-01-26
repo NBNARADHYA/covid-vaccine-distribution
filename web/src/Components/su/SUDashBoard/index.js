@@ -213,41 +213,42 @@ export const SUDashBoard = ({ history }) => {
           </Snackbar>
         </span>
       </Typography>
-      <div style={{ marginBottom: "5vh" }}>
-        <Typography
-          variant="h5"
-          color="secondary"
-          style={{ marginBottom: "3vh" }}
-        >
-          <span style={{ marginRight: "30px" }}>
-            Patient Trend throughout India
-          </span>
-          <span style={{ fontSize: "16px", color: "#5c5c8a" }}>
-            Last&nbsp;
-            <TextField
-              variant="outlined"
-              value={lastNumDays}
-              size="small"
-              onChange={(e) => setLastNumDays(e.target.value)}
-              className="last-num-days"
-            />
-            &nbsp;Days
-          </span>
-          <span
-            style={{ fontSize: "16px", color: "#808000", marginLeft: "40px" }}
+      {Boolean(patientTrendDates.length) && (
+        <div style={{ marginBottom: "5vh" }}>
+          <Typography
+            variant="h5"
+            color="secondary"
+            style={{ marginBottom: "3vh" }}
           >
-            Next&nbsp;
-            <TextField
-              variant="outlined"
-              value={nextNumDays}
-              size="small"
-              onChange={(e) => setNextNumDays(e.target.value)}
-              className="last-num-days"
-            />
-            &nbsp;Days
-          </span>
-        </Typography>
-        {patientTrendDates.length && (
+            <span style={{ marginRight: "30px" }}>
+              Patient Trend throughout India
+            </span>
+            <span style={{ fontSize: "16px", color: "#5c5c8a" }}>
+              Last&nbsp;
+              <TextField
+                variant="outlined"
+                value={lastNumDays}
+                size="small"
+                onChange={(e) => setLastNumDays(e.target.value)}
+                className="last-num-days"
+              />
+              &nbsp;Days
+            </span>
+            <span
+              style={{ fontSize: "16px", color: "#808000", marginLeft: "40px" }}
+            >
+              Next&nbsp;
+              <TextField
+                variant="outlined"
+                value={nextNumDays}
+                size="small"
+                onChange={(e) => setNextNumDays(e.target.value)}
+                className="last-num-days"
+              />
+              &nbsp;Days
+            </span>
+          </Typography>
+
           <Bar
             data={{
               labels: patientTrendDates,
@@ -304,8 +305,8 @@ export const SUDashBoard = ({ history }) => {
               },
             }}
           />
-        )}
-      </div>
+        </div>
+      )}
       <div style={{ marginBottom: "5vh" }}>
         <div style={{ marginBottom: "2vh" }}>
           <Typography

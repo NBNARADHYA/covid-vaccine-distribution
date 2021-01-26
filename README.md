@@ -1,5 +1,23 @@
 # Code Repository for EY Techathon
 
+## Working Demo
+
+1. Home page with all the stats and trends.
+
+   ![Home page demo](workingDemo/homePage.gif)
+
+2. User(patient) signing up and registering for the vaccination.
+
+   ![User Actions](workingDemo/user.gif)
+
+3. Super user (vaccination production center) dispatches a new batch of vaccines
+
+   ![Super user actions](workingDemo/superUser.gif)
+
+4. Admin (vaccination center) schedules time slots for those patients who have be prioritized by the super user and dispatched vaccines.
+
+   ![Admin actions](workingDemo/admin.gif)
+
 ## Contributing Guidelines
 
 1. This repository consists of 3 sub projects (folders) namely `web`, `server` and `model`.

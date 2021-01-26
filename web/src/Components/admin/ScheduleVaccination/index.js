@@ -9,7 +9,6 @@ import {
   TextField,
   CircularProgress,
   Card,
-  Popover,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -20,22 +19,12 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { ErrorAlert } from "../../common/ErrorAlert";
 import { Alert } from "@material-ui/lab";
 import { AccessTokenContext } from "../../../Contexts/AccessToken";
-// import { joinErrors } from "../../utils/joinErrors";
-// import { isDate } from "../../utils/isDate";
-// import {
-//   MuiPickersUtilsProvider,
-//   KeyboardDatePicker,
-// } from "@material-ui/pickers";
-// import DateFnsUtils from "@date-io/date-fns";
 
 const useStyles = makeStyles((theme) => ({
   formContainer: {
     [theme.breakpoints.down("sm")]: {
       width: "90%",
     },
-    // [theme.breakpoints.between("sm", "lg")]: {
-    //   width: "65%",
-    // },
     [theme.breakpoints.up("sm")]: {
       width: "65%",
     },
@@ -72,15 +61,6 @@ export const SchedulePatientsForVaccination = ({ history }) => {
     accessToken,
     user: { isAdmin },
   } = useContext(AccessTokenContext);
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   const handleDialogClose = useCallback(() => setDialogOpen(false), []);
 
