@@ -51,7 +51,10 @@ export const registerAndDispatchVaccines = async (
       [JSON.stringify(suLocation), true, false, false, false, numVaccines]
     );
 
-    if (!patients.length) return true;
+    if (!patients.length) {
+      console.log("hi");
+      return true;
+    }
 
     // Update patients' entries to include their vaccination center email and date of vaccination
     await dbConnection

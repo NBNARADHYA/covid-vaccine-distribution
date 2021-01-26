@@ -69,9 +69,15 @@ export const SignUp = ({ history }) => {
     },
     events: {
       onChange({ suggestion }) {
-        const { lat, lng } = suggestion.latlng;
+        const {
+          name,
+          administrative,
+          country,
+          latlng: { lat, lng },
+        } = suggestion;
         setLat(lat);
         setLng(lng);
+        setLocation(`${name}, ${administrative}, ${country}`);
       },
     },
   });
@@ -132,7 +138,7 @@ export const SignUp = ({ history }) => {
           lastName: "",
           location: "",
         }}
-        validate={({ email, password, firstName, location }) => {
+        validate={({ email, password, firstName }) => {
           const errors = {};
           if (!email) {
             errors.email = "Email required";
@@ -145,7 +151,6 @@ export const SignUp = ({ history }) => {
             errors.password = "Password should be min. 5 characters long";
 
           if (
-            location === "" ||
             lat === null ||
             lat === undefined ||
             lng === null ||
@@ -247,10 +252,7 @@ export const SignUp = ({ history }) => {
                   inputRef={algoliaPlacesRef}
                   fullWidth
                   variant="contained"
-                  onChange={(e) => {
-                    setFieldValue("location", e.target.value);
-                    setLocation(e.target.value);
-                  }}
+                  onChange={(e) => setLocation(e.target.value)}
                 />
                 <ErrorMessage name="location" component={ErrorAlert} />
               </Grid>

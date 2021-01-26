@@ -203,6 +203,9 @@ export const ViewAdmin = ({ history }) => {
                     fontSize: 18,
                     beginAtZero: true,
                   },
+                  gridLines: {
+                    color: "#669999",
+                  },
                 },
               ],
               xAxes: [
@@ -210,6 +213,9 @@ export const ViewAdmin = ({ history }) => {
                   ticks: {
                     fontColor: "white",
                     fontSize: 14,
+                  },
+                  gridLines: {
+                    color: "#669999",
                   },
                 },
               ],

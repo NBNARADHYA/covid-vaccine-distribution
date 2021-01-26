@@ -224,6 +224,9 @@ export const Home = ({ history }) => {
                       fontSize: 18,
                       beginAtZero: true,
                     },
+                    gridLines: {
+                      color: "#669999",
+                    },
                   },
                 ],
                 xAxes: [
@@ -231,6 +234,9 @@ export const Home = ({ history }) => {
                     ticks: {
                       fontColor: "white",
                       fontSize: 14,
+                    },
+                    gridLines: {
+                      color: "#669999",
                     },
                   },
                 ],
@@ -246,9 +252,7 @@ export const Home = ({ history }) => {
             color="secondary"
             style={{ marginBottom: "2.7vh" }}
           >
-            <span style={{ marginRight: "20px" }}>
-              Insights from the Dataset
-            </span>
+            <span style={{ marginRight: "40px" }}>Feature Trends</span>
             <span>
               <Select
                 value={activePlotStep}
@@ -390,6 +394,13 @@ export const Home = ({ history }) => {
         </Grid>
       </Grid>
       <div>
+        <Typography
+          variant="h5"
+          color="secondary"
+          style={{ marginBottom: "3vh" }}
+        >
+          Different vaccination centres and their cluster percentages
+        </Typography>
         <ReactMapGL
           {...viewport2}
           onViewportChange={(viewport) => setViewport2(viewport)}

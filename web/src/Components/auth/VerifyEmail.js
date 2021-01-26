@@ -10,7 +10,7 @@ export const VerifyEmail = ({ history }) => {
   const verifyEmailHash = query.get("verify_email_hash");
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_SERVER}/verify_email`, {
+    fetch(`${process.env.REACT_APP_SERVER}/auth/verify_email`, {
       method: "POST",
       body: JSON.stringify({
         verify_email_hash: verifyEmailHash,

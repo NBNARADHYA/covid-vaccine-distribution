@@ -285,6 +285,9 @@ export const SUDashBoard = ({ history }) => {
                       fontSize: 18,
                       beginAtZero: true,
                     },
+                    gridLines: {
+                      color: "#669999",
+                    },
                   },
                 ],
                 xAxes: [
@@ -292,6 +295,9 @@ export const SUDashBoard = ({ history }) => {
                     ticks: {
                       fontColor: "white",
                       fontSize: 14,
+                    },
+                    gridLines: {
+                      color: "#669999",
                     },
                   },
                 ],

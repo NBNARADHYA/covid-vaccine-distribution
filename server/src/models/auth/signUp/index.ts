@@ -47,7 +47,7 @@ export const signUp = async ({
   sendMail({
     to: email,
     html: `<div>Click 
-            <a href="${process.env.WEB}/verify_email?verify_email_hash=${verifyEmailHash}">here</a>
+            <a href="${process.env.WEB}/auth/verify_email?verify_email_hash=${verifyEmailHash}">here</a>
             to verify your email
           </div>`,
     subject: "Verify your email",

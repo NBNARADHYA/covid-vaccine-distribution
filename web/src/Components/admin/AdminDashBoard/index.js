@@ -217,7 +217,23 @@ export const AdminDashBoard = ({ history }) => {
               yAxes: [
                 {
                   ticks: {
+                    fontColor: "white",
+                    fontSize: 18,
                     beginAtZero: true,
+                  },
+                  gridLines: {
+                    color: "#669999",
+                  },
+                },
+              ],
+              xAxes: [
+                {
+                  ticks: {
+                    fontColor: "white",
+                    fontSize: 14,
+                  },
+                  gridLines: {
+                    color: "#669999",
                   },
                 },
               ],

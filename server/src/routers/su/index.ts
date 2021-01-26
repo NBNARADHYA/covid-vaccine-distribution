@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { getAdminsRouter } from "../getAdmins";
+import { createRandomAdminsAndUsersRouter } from "./createRandomAdminsAndUsers";
 import { getRegisteredPatientsRouter } from "./getRegisteredPatients";
 import { registerAndDispatchVaccinesRouter } from "./registerAndDispatchVaccines";
 import { signUpAdminRouter } from "./signUpAdmin";
@@ -16,3 +17,4 @@ superUserRouter.use(
   "/admins/:adminEmail/registered_patients",
   getRegisteredPatientsRouter
 );
+superUserRouter.use("/random_admins_users", createRandomAdminsAndUsersRouter);
