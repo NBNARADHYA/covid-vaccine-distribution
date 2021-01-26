@@ -1,5 +1,5 @@
 import { point, nearestPoint, featureCollection } from "@turf/turf";
-import { hashSync } from "bcryptjs";
+import { hash } from "bcryptjs";
 import { internet, name } from "faker";
 import { getConnection } from "typeorm";
 import { User } from "../../../entity/User";
@@ -23,22 +23,23 @@ export const createRandomAdminsAndUsers = async (
 ): Promise<boolean> => {
   const dbConnection = getConnection();
 
-  const admins: User[] = getRandomElementsFromArray(
-    cities,
-    Math.min(numAdmins, cities.length)
-  ).map((city) => {
-    const admin = new User();
+  const admins: User[] = await Promise.all(
+    getRandomElementsFromArray(cities, Math.min(numAdmins, cities.length)).map(
+      async (city) => {
+        const admin = new User();
 
-    admin.email = city.city.toLowerCase() + "@infinity.com";
-    admin.firstName = city.city;
-    admin.lastName = "Admin";
-    admin.password = hashSync("12345", 10);
-    admin.isVerified = true;
-    admin.isAdmin = true;
-    admin.location = { type: "Point", coordinates: [+city.lat, +city.lng] };
+        admin.email = internet.email();
+        admin.firstName = city.city;
+        admin.lastName = "Admin";
+        admin.password = await hash("12345", 10);
+        admin.isVerified = true;
+        admin.isAdmin = true;
+        admin.location = { type: "Point", coordinates: [+city.lat, +city.lng] };
 
-    return admin;
-  });
+        return admin;
+      }
+    )
+  );
 
   const users: User[] = new Array(numUsers).fill(0).map(() => {
     const user = new User();
@@ -48,15 +49,16 @@ export const createRandomAdminsAndUsers = async (
     user.lastName = name.lastName();
     user.password = internet.password();
     user.isVerified = true;
-    user.isVaccinated = Boolean(getRandomInt(0, 1));
+    user.isVaccinated = 0.5 - Math.random() > 0;
 
     const date = new Date();
     if (user.isVaccinated) {
       date.setDate(date.getDate() - getRandomInt(1, 60));
       user.vaccinationDate = date.toDateString();
+      user.vaccinationTimeSlot =
+        timeSlots[getRandomInt(0, timeSlots.length - 1)];
     }
 
-    user.vaccinationTimeSlot = timeSlots[getRandomInt(0, timeSlots.length - 1)];
     user.covidVulnerabilityScore = Math.random();
 
     const { lat, lng } = cities[getRandomInt(0, cities.length - 1)]!;

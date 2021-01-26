@@ -154,93 +154,95 @@ export const AdminDashBoard = ({ history }) => {
           </Menu>
         </span>
       </Typography>
-      <div style={{ marginBottom: "3vh" }}>
-        <Typography
-          variant="h5"
-          color="secondary"
-          style={{ marginBottom: "3vh" }}
-        >
-          <span style={{ marginRight: "30px" }}>
-            Patient Trend of your center
-          </span>
-          <span style={{ fontSize: "16px", color: "#5c5c8a" }}>
-            Last&nbsp;
-            <TextField
-              variant="outlined"
-              value={lastNumDays}
-              size="small"
-              onChange={(e) => setLastNumDays(e.target.value)}
-              className="last-num-days"
-            />
-            &nbsp;Days
-          </span>
-          <span
-            style={{ fontSize: "16px", color: "#808000", marginLeft: "40px" }}
+      {Boolean(Object.keys(scheduledOrVaccinatedPatients).length) && (
+        <div style={{ marginBottom: "3vh" }}>
+          <Typography
+            variant="h5"
+            color="secondary"
+            style={{ marginBottom: "3vh" }}
           >
-            Next&nbsp;
-            <TextField
-              variant="outlined"
-              value={nextNumDays}
-              size="small"
-              onChange={(e) => setNextNumDays(e.target.value)}
-              className="last-num-days"
-            />
-            &nbsp;Days
-          </span>
-        </Typography>
-        <Bar
-          data={{
-            labels: Object.keys(scheduledOrVaccinatedPatients).map(
-              (day) => day
-            ),
-            datasets: [
-              {
-                label: "#patients vaccinated",
-                data: Object.keys(scheduledOrVaccinatedPatients).map(
-                  (day) => registeredPatients["vaccinated"][day]?.length || 0
-                ),
-                borderColor: "#00e600",
-                backgroundColor: "#b3ffb3",
-              },
-              {
-                label: "#patients scheduled for vaccination",
-                data: Object.keys(registeredPatients["scheduled"]).map(
-                  (day) => registeredPatients["scheduled"][day]?.length | 0
-                ),
-                borderColor: "#ff4d4d",
-                backgroundColor: "#ffb3b3",
-              },
-            ],
-          }}
-          options={{
-            scales: {
-              yAxes: [
+            <span style={{ marginRight: "30px" }}>
+              Patient Trend of your center
+            </span>
+            <span style={{ fontSize: "16px", color: "#5c5c8a" }}>
+              Last&nbsp;
+              <TextField
+                variant="outlined"
+                value={lastNumDays}
+                size="small"
+                onChange={(e) => setLastNumDays(e.target.value)}
+                className="last-num-days"
+              />
+              &nbsp;Days
+            </span>
+            <span
+              style={{ fontSize: "16px", color: "#808000", marginLeft: "40px" }}
+            >
+              Next&nbsp;
+              <TextField
+                variant="outlined"
+                value={nextNumDays}
+                size="small"
+                onChange={(e) => setNextNumDays(e.target.value)}
+                className="last-num-days"
+              />
+              &nbsp;Days
+            </span>
+          </Typography>
+          <Bar
+            data={{
+              labels: Object.keys(scheduledOrVaccinatedPatients).map(
+                (day) => day
+              ),
+              datasets: [
                 {
-                  ticks: {
-                    fontColor: "white",
-                    fontSize: 18,
-                    beginAtZero: true,
-                  },
-                  gridLines: {
-                    color: "#669999",
-                  },
+                  label: "#patients vaccinated",
+                  data: Object.keys(scheduledOrVaccinatedPatients).map(
+                    (day) => registeredPatients["vaccinated"][day]?.length || 0
+                  ),
+                  borderColor: "#00e600",
+                  backgroundColor: "#b3ffb3",
+                },
+                {
+                  label: "#patients scheduled for vaccination",
+                  data: Object.keys(registeredPatients["scheduled"]).map(
+                    (day) => registeredPatients["scheduled"][day]?.length | 0
+                  ),
+                  borderColor: "#ff4d4d",
+                  backgroundColor: "#ffb3b3",
                 },
               ],
-              xAxes: [
-                {
-                  ticks: {
-                    fontColor: "white",
-                    fontSize: 14,
+            }}
+            options={{
+              scales: {
+                yAxes: [
+                  {
+                    ticks: {
+                      fontColor: "white",
+                      fontSize: 18,
+                      beginAtZero: true,
+                    },
+                    gridLines: {
+                      color: "#669999",
+                    },
                   },
-                  gridLines: {
-                    color: "#669999",
+                ],
+                xAxes: [
+                  {
+                    ticks: {
+                      fontColor: "white",
+                      fontSize: 14,
+                    },
+                    gridLines: {
+                      color: "#669999",
+                    },
                   },
-                },
-              ],
-            },
-          }}
-        />
-      </div>
+                ],
+              },
+            }}
+          />
+        </div>
+      )}
       <div style={{ marginBottom: "5vh" }}>
         <Typography
           variant="h5"
