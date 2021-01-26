@@ -41,3 +41,8 @@
 .content-wrap {
   padding-bottom: 3.5rem;
 }
+
+.ap-dropdown-menu {
+  color: black;
+  text-align: start;
+}

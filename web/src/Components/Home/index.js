@@ -22,6 +22,9 @@ import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import SwipeableViews from "react-swipeable-views";
 import { autoPlay } from "react-swipeable-views-utils";
 import { plots } from "./plots";
+import clusters from "../../clusters.json";
+import { getRandomColor } from "../utils/randomColor";
+import { lightenDarkenColor } from "../utils/lightenColor";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
@@ -53,14 +56,21 @@ export const Home = ({ history }) => {
   const [nextNumDays, setNextNumDays] = useState(30);
   const [admins, setAdmins] = useState([]);
   const [selectedAdmin, setSelectedAdmin] = useState(null);
+  const [selectedCluster, setSelectedCluster] = useState(null);
 
-  const [viewport, setViewport] = useState({
+  const [viewport1, setViewport1] = useState({
+    latitude: 20.5937,
+    longitude: 78.9629,
+    zoom: 3.5,
+  });
+  const [viewport2, setViewport2] = useState({
     latitude: 20.5937,
     longitude: 78.9629,
     zoom: 3.5,
   });
   const theme = useTheme();
   const [activePlotStep, setActivePlotStep] = useState(0);
+  const [randomColors, setRandomColors] = useState([]);
   const maxSteps = plots.length;
 
   const handlePlotNext = () => {
@@ -96,6 +106,14 @@ export const Home = ({ history }) => {
       .catch(console.error);
   }, []);
 
+  useEffect(() => {
+    const arr = [];
+    Object.keys(clusters).forEach(() => {
+      arr.push(getRandomColor());
+    });
+    setRandomColors(arr);
+  }, []);
+
   const patientTrendDates = useMemo(() => {
     const map = {},
       dates = [];
@@ -122,7 +140,7 @@ export const Home = ({ history }) => {
   };
 
   return (
-    <Container style={{ paddingTop: "5vh" }}>
+    <Container style={{ paddingTop: "5vh", paddingBottom: "5vh" }}>
       {accessToken && (
         <IconButton
           onClick={() => {
@@ -309,8 +327,8 @@ export const Home = ({ history }) => {
             Vaccination centres accross India
           </Typography>
           <ReactMapGL
-            {...viewport}
-            onViewportChange={(viewport) => setViewport(viewport)}
+            {...viewport1}
+            onViewportChange={(viewport) => setViewport1(viewport)}
             height="520px"
             width="700px"
             mapboxApiAccessToken={process.env.REACT_APP_MAP_TOKEN}
@@ -371,6 +389,74 @@ export const Home = ({ history }) => {
           </ReactMapGL>
         </Grid>
       </Grid>
+      <div>
+        <ReactMapGL
+          {...viewport2}
+          onViewportChange={(viewport) => setViewport2(viewport)}
+          height="70vh"
+          width="70vw"
+          mapboxApiAccessToken={process.env.REACT_APP_MAP_TOKEN}
+          mapStyle={process.env.REACT_APP_MAP_STYLE_URL}
+        >
+          {randomColors.length &&
+            Object.entries(clusters).map(
+              ([district, [latLng, values]], index) => {
+                latLng = latLng.split(",");
+                const lat = parseFloat(latLng[0]);
+                const lng = parseFloat(latLng[1]);
+                return (
+                  <Marker latitude={lat} key={index} longitude={lng}>
+                    <span style={{}}>
+                      <button
+                        className="marker-btn"
+                        style={{ color: randomColors[index] }}
+                        onClick={() =>
+                          setSelectedCluster({
+                            lat,
+                            lng,
+                            ...values,
+                            district,
+                            index,
+                          })
+                        }
+                      >
+                        ⦾
+                      </button>
+                    </span>
+                  </Marker>
+                );
+              }
+            )}
+          {selectedCluster && (
+            <Popup
+              latitude={selectedCluster.lat}
+              longitude={selectedCluster.lng}
+              onClose={() => setSelectedCluster(null)}
+            >
+              <div
+                className="popup"
+                style={{
+                  backgroundColor: lightenDarkenColor(
+                    randomColors[selectedCluster.index],
+                    75
+                  ),
+                }}
+              >
+                <Typography variant="body1">
+                  <b style={{ marginRight: "7px" }}>District</b>
+                  {selectedCluster.district}
+                </Typography>
+                {new Array(20).fill(0).map((_, idx) => (
+                  <Typography variant="body1" key="idx">
+                    <b style={{ marginRight: "7px" }}>Cluster{idx}</b>&nbsp;
+                    {selectedCluster[`${idx}`]}&nbsp;%
+                  </Typography>
+                ))}
+              </div>
+            </Popup>
+          )}
+        </ReactMapGL>
+      </div>
     </Container>
   );
 };

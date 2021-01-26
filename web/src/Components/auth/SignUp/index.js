@@ -5,20 +5,20 @@ import {
   Grid,
   TextField,
   Button,
-  MenuItem,
   Snackbar,
   FormControlLabel,
   Checkbox,
+  Input,
 } from "@material-ui/core";
 import { Form, Formik, Field, ErrorMessage } from "formik";
 import { isEmail } from "../../utils/isEmail";
-import { states } from "./states";
 import { ErrorAlert } from "../../common/ErrorAlert";
 import { Link } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { Alert } from "@material-ui/lab";
 import { joinErrors } from "../../utils/joinErrors";
 import { AccessTokenContext } from "../../../Contexts/AccessToken";
+import useAlgoliaPlaces from "../../hooks/useAlgoliPlaces";
 
 const useStyles = makeStyles((theme) => ({
   formContainer: {
@@ -54,10 +54,34 @@ export const SignUp = ({ history }) => {
   const [errOpen, setErrOpen] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [lat, setLat] = useState(null);
+  const [lng, setLng] = useState(null);
+  const [location, setLocation] = useState("");
   const {
     accessToken,
     user: { isAdmin },
   } = useContext(AccessTokenContext);
+
+  const setContainer = useAlgoliaPlaces({
+    options: {
+      appId: process.env.REACT_APP_ALGOLIA_APP_ID,
+      apiKey: process.env.REACT_APP_ALGOLIA_API_KEY,
+    },
+    events: {
+      onChange({ suggestion }) {
+        const { lat, lng } = suggestion.latlng;
+        setLat(lat);
+        setLng(lng);
+      },
+    },
+  });
+
+  const algoliaPlacesRef = useCallback((node) => {
+    if (node !== null) {
+      setContainer(node);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (accessToken && !isAdmin) {
     history.push("/");
@@ -106,9 +130,9 @@ export const SignUp = ({ history }) => {
           password: "",
           firstName: "",
           lastName: "",
-          state: "",
+          location: "",
         }}
-        validate={({ email, password, firstName, state }) => {
+        validate={({ email, password, firstName, location }) => {
           const errors = {};
           if (!email) {
             errors.email = "Email required";
@@ -120,7 +144,16 @@ export const SignUp = ({ history }) => {
           else if (password.length < 5)
             errors.password = "Password should be min. 5 characters long";
 
-          if (state === "") errors.state = "Location required";
+          if (
+            location === "" ||
+            lat === null ||
+            lat === undefined ||
+            lng === null ||
+            lng === undefined
+          )
+            errors.location = "Location required";
+          else if (isNaN(lat) || isNaN(lng))
+            errors.location = "Invalid location";
 
           return errors;
         }}
@@ -136,7 +169,7 @@ export const SignUp = ({ history }) => {
                 headers: {
                   "Content-Type": "application/json",
                 },
-                body: JSON.stringify(values),
+                body: JSON.stringify({ ...values, lat, lng }),
               }
             );
             res = await res.json();
@@ -152,7 +185,7 @@ export const SignUp = ({ history }) => {
           }
         }}
       >
-        {({ isSubmitting, handleChange, values }) => (
+        {({ isSubmitting, handleChange, values, setFieldValue }) => (
           <Form>
             <Grid container direction="column" spacing={2}>
               <Grid item xs={12}>
@@ -205,21 +238,21 @@ export const SignUp = ({ history }) => {
                     />
                   </Grid>
                 )}
-                <Grid item xs={6}>
-                  <TextField
-                    select
-                    label="Location"
-                    value={values.state}
-                    onChange={handleChange("state")}
-                    fullWidth
-                  >
-                    {states.map((state, idx) => (
-                      <MenuItem value={idx} key={idx}>
-                        {state}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
+              </Grid>
+              <Grid item xs={12}>
+                <Input
+                  placeholder="Location"
+                  label="Location"
+                  value={location}
+                  inputRef={algoliaPlacesRef}
+                  fullWidth
+                  variant="contained"
+                  onChange={(e) => {
+                    setFieldValue("location", e.target.value);
+                    setLocation(e.target.value);
+                  }}
+                />
+                <ErrorMessage name="location" component={ErrorAlert} />
               </Grid>
               <Grid item xs={12}>
                 <Typography
