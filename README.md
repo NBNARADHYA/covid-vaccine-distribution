@@ -8,7 +8,7 @@
 
 2. User(patient) signing up and registering for the vaccination.
 
-   ![User Actions](workingDemo/userSignupAndVaccineRegistration.gif)
+   ![User Actions](workingDemo/user.gif)
 
 3. Super user (vaccination production center) dispatches a new batch of vaccines
 
