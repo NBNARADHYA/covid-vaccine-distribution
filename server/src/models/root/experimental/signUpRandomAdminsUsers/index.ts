@@ -2,8 +2,8 @@ import { point, nearestPoint, featureCollection } from "@turf/turf";
 import { hash } from "bcryptjs";
 import { internet, name } from "faker";
 import { getConnection } from "typeorm";
-import { User } from "../../../entity/User";
-import { timeSlots } from "../../admin/scheduleVaccination/timeSlots";
+import { User } from "../../../../entity/User";
+import { timeSlots } from "../../../admin/scheduleVaccination/timeSlots";
 import cities from "./cities.json";
 
 const getRandomInt = (min: number, max: number): number => {
@@ -17,7 +17,7 @@ const getRandomElementsFromArray = <T>(arr: T[], n: number) => {
   return shuffled.slice(0, n);
 };
 
-export const createRandomAdminsAndUsers = async (
+export const signUpRandomAdminsUsers = async (
   numAdmins: number,
   numUsers: number
 ): Promise<boolean> => {

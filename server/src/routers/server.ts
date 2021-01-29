@@ -11,6 +11,8 @@ import { userRouter } from "./user";
 import { authRouter } from "./auth";
 import { getAdminsRouter } from "./getAdmins";
 import { getPatientTrendRouter } from "./getPatientTrend";
+import { verifyRoot } from "../models/middlewares/verifyRoot";
+import { rootRouter } from "./root";
 
 export const server = express();
 
@@ -25,6 +27,7 @@ server.use(bodyParser.urlencoded({ extended: false }));
 server.use(bodyParser.json());
 server.use(cookieParser());
 
+server.use("/root", verifyUser, verifyRoot, rootRouter);
 server.use("/admin", verifyUser, verifyAdmin, adminRouter);
 server.use("/su", verifyUser, verifySuperUser, superUserRouter);
 server.use("/user", verifyUser, userRouter);

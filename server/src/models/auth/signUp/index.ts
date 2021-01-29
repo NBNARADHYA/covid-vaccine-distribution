@@ -44,7 +44,10 @@ export const signUp = async ({
     coordinates: [lat, lng],
   };
 
-  if (isRoot) user.isRoot = true;
+  if (isRoot) {
+    user.isRoot = true;
+    user.isVerified = true;
+  }
   if (isSuperUser) user.isSuperUser = true;
   if (isAdmin) user.isAdmin = true;
 
@@ -65,8 +68,6 @@ export const signUp = async ({
           </div>`,
     subject: "Verify your email",
   }).catch(console.error);
-
-  console.log(verifyEmailHash);
 
   return true;
 };

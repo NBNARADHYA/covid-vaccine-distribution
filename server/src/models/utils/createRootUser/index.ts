@@ -5,7 +5,9 @@ import { signUp } from "../../auth/signUp";
 export const createRootUser = async (): Promise<boolean> => {
   const dbConnection = getConnection();
 
-  const rootEmail = process.env.ROOT_EMAIL!;
+  const rootEmail = process.env.ROOT_EMAIL;
+
+  if (!rootEmail) return false;
 
   try {
     let rootUser = await dbConnection
@@ -14,7 +16,9 @@ export const createRootUser = async (): Promise<boolean> => {
 
     if (rootUser) return false;
 
-    const rootPassword = process.env.ROOT_PASSWORD!;
+    const rootPassword = process.env.ROOT_PASSWORD;
+
+    if (!rootPassword) return false;
 
     await signUp({
       firstName: "Root",

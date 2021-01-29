@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { signUpAdmin } from "../../models/su/signUpAdmin";
+import { signUp } from "../../models/auth/signUp";
 import { validate } from "../auth/signUp/validate";
 
 export const signUpAdminRouter = Router();
@@ -12,7 +12,7 @@ signUpAdminRouter.post(
     if (errors.length) return res.status(400).send({ errors });
 
     try {
-      await signUpAdmin(req.body);
+      await signUp(req.body);
 
       return res.status(200).send({ success: true });
     } catch (error) {
