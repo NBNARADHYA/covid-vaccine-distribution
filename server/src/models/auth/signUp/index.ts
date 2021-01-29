@@ -11,6 +11,9 @@ export interface SignUpProps {
   password: string;
   lat: number;
   lng: number;
+  isRoot?: boolean;
+  isSuperUser?: boolean;
+  isAdmin?: boolean;
 }
 
 export const signUp = async ({
@@ -20,22 +23,32 @@ export const signUp = async ({
   password,
   lat,
   lng,
+  isRoot,
+  isAdmin,
+  isSuperUser,
 }: SignUpProps): Promise<boolean> => {
   const dbConnection = getConnection();
 
-  const hashedPassword = await hash(password, 10);
-
-  const verifyEmailHash = genHash();
-
   const user = new User();
+
+  user.email = email;
+
+  const hashedPassword = await hash(password, 10);
+  user.password = hashedPassword;
+
   user.firstName = firstName;
   if (lastName) user.lastName = lastName;
-  user.email = email;
-  user.password = hashedPassword;
+
   user.location = {
     type: "Point",
     coordinates: [lat, lng],
   };
+
+  if (isRoot) user.isRoot = true;
+  if (isSuperUser) user.isSuperUser = true;
+  if (isAdmin) user.isAdmin = true;
+
+  const verifyEmailHash = genHash();
   user.verifyEmailHash = verifyEmailHash;
 
   try {

@@ -40,6 +40,9 @@ export class User {
   isSuperUser?: boolean;
 
   @Column({ default: false })
+  isRoot?: boolean;
+
+  @Column({ default: false })
   isVaccinated?: boolean;
 
   @Column({ nullable: true })

@@ -8,11 +8,14 @@ if (process.env.NODE_ENV === "development") {
 
 import "reflect-metadata";
 import { createConnection } from "typeorm";
+import { createRootUser } from "./models/utils/createRootUser";
 import { server } from "./routers/server";
 
 (async () => {
   try {
     await createConnection();
+
+    await createRootUser();
 
     const PORT: number = +(process.env.PORT || 5000);
 
