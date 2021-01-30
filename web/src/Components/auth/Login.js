@@ -53,7 +53,10 @@ export const Login = ({ history }) => {
 
   const { setAccessToken, accessToken } = useContext(AccessTokenContext);
 
-  if (accessToken) history.push("/");
+  if (accessToken) {
+    history.push("/");
+    return null;
+  }
 
   return (
     <Container className={classes.formContainer}>

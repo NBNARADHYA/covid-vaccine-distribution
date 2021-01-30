@@ -3,10 +3,10 @@ import {
   responsiveFontSizes,
   makeStyles,
 } from "@material-ui/core/styles";
-import { cyan } from "@material-ui/core/colors";
+import { amber, cyan } from "@material-ui/core/colors";
 
 let theme = createMuiTheme({
-  palette: { type: "dark", primary: cyan, secondary: cyan },
+  palette: { type: "dark", primary: amber, secondary: amber },
 });
 
 theme = responsiveFontSizes(theme);
