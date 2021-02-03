@@ -3,7 +3,7 @@ import {
   responsiveFontSizes,
   makeStyles,
 } from "@material-ui/core/styles";
-import { amber, cyan } from "@material-ui/core/colors";
+import { amber } from "@material-ui/core/colors";
 
 let theme = createMuiTheme({
   palette: { type: "dark", primary: amber, secondary: amber },

@@ -1,4 +1,4 @@
-import { CssBaseline, ThemeProvider } from "@material-ui/core";
+import { ThemeProvider } from "@material-ui/core";
 import { Footer } from "../Components/common/Footer";
 import { Header } from "../Components/common/Header";
 import { theme, useStyle } from "./styles";
@@ -8,7 +8,6 @@ export const Layout = ({ children }) => {
 
   return (
     <ThemeProvider theme={theme}>
-      {/* <CssBaseline /> */}
       <Header />
       <div
         style={{

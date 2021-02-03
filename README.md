@@ -1,4 +1,4 @@
-# Code Repository for EY Techathon
+# Team Infinity's Official Code Repository for EY Techathon 2021
 
 ## Working Demo
 
@@ -20,7 +20,7 @@
 
 ## Contributing Guidelines
 
-1. This repository consists of 3 sub projects (folders) namely `web`, `server` and `model`.
+1. This repository consists of 3 sub projects (folders) namely `web`, `server` and `mlModel`.
 2. So, commit code to the corresponding folders.
 
 ## Dev Setup
@@ -29,7 +29,7 @@
 
 1. Fork the repo to your account.
 
-2. Go to the forked repo and clone it to your local machine:
+2. Clone your forked repo to your local machine:
 
 ```
 git clone https://github.com/<your_username>/ey-techathon.git
@@ -37,32 +37,32 @@ git clone https://github.com/<your_username>/ey-techathon.git
 
 This will make a copy of the code to your local machine.
 
-3. Now move to the `ey-techathon` directory.
+3. Change directory to `ey-techathon`.
 
 ```
 cd ey-techathon
 ```
 
-4. Now check the remote of your local code by:
+4. Check the remote of your local repo by:
 
 ```
 git remote -v
 ```
 
-The response should look like:
+It should output the following:
 
 ```
 origin	https://github.com/<username>/ey-techathon.git (fetch)
 origin	https://github.com/<username>/ey-techathon.git (push)
 ```
 
-To add upstream to remote, run:
+Add upstream to remote:
 
 ```
 git remote add upstream https://github.com/NBNARADHYA/ey-techathon.git
 ```
 
-Again run `git remote -v`, the response should look like:
+Running `git remote -v` should then print the following:
 
 ```
 origin	https://github.com/<username>/ey-techathon.git (fetch)
@@ -95,7 +95,7 @@ upstream	https://github.com/NBNARADHYA/ey-techathon (push)
 3. Run `yarn install`
 4. Run `yarn start` to start the server
 
-### Setup `model`
+### Setup `mlModel`
 
 #### Pre-requisites
 
@@ -104,8 +104,7 @@ upstream	https://github.com/NBNARADHYA/ey-techathon (push)
 
 #### Steps
 
-1. Run `cd model`
+1. Run `cd server/mlModel`
 2. Run `python3 -m venv venv` to create a virtual environment
 3. Activate `venv` by running `. venv/bin/activate`
 4. Run `pip3 install -r requirements.txt` to install packages
-5. Run `FLASK_APP=app.py flask run -h localhost -p 8000` to start the server

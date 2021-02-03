@@ -17,27 +17,20 @@ export interface SignUpProps {
 }
 
 export const signUp = async ({
-  firstName,
-  lastName,
-  email,
   password,
   lat,
   lng,
   isRoot,
-  isAdmin,
-  isSuperUser,
+  ...restUserDetails
 }: SignUpProps): Promise<boolean> => {
   const dbConnection = getConnection();
 
-  const user = new User();
+  let user = new User();
 
-  user.email = email;
+  user = Object.assign<User, typeof restUserDetails>(user, restUserDetails);
 
   const hashedPassword = await hash(password, 10);
   user.password = hashedPassword;
-
-  user.firstName = firstName;
-  if (lastName) user.lastName = lastName;
 
   user.location = {
     type: "Point",
@@ -48,8 +41,6 @@ export const signUp = async ({
     user.isRoot = true;
     user.isVerified = true;
   }
-  if (isSuperUser) user.isSuperUser = true;
-  if (isAdmin) user.isAdmin = true;
 
   const verifyEmailHash = genHash();
   user.verifyEmailHash = verifyEmailHash;
@@ -61,7 +52,7 @@ export const signUp = async ({
   }
 
   sendMail({
-    to: email,
+    to: restUserDetails.email,
     html: `<div>Click 
             <a href="${process.env.WEB}/auth/verify_email?verify_email_hash=${verifyEmailHash}">here</a>
             to verify your email
