@@ -1256,6 +1256,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/python-shell@^0.4.2":
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/@types/python-shell/-/python-shell-0.4.2.tgz#b6a5cbbf8ab2717fa036bf232e581f7aa4004c05"
+  integrity sha512-deATAIZFUdjZwXilgZVgK+CVpoSfdS1NUmgGVooAkPMJe2X6NTnwWfr5+tEpdRDiG5BKoNFwr2p8LU29/bIaIQ==
+
 "@types/qs@*":
   version "6.9.5"
   resolved "https://registry.yarnpkg.com/@types/qs/-/qs-6.9.5.tgz#434711bdd49eb5ee69d90c1d67c354a9a8ecb18b"
@@ -2821,6 +2826,11 @@ pupa@^2.0.1:
   integrity sha512-l1jNAspIBSFqbT+y+5FosojNpVpF94nlI+wDUpqP9enwOTfHx9f0gh5nB96vl+6yTpsJsypeNrwfzPrKuHB41A==
   dependencies:
     escape-goat "^2.0.0"
+
+python-shell@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/python-shell/-/python-shell-2.0.3.tgz#03040cae27934d88e1226fd34316b39dfb2fddf0"
+  integrity sha512-SBYQzXjexcxmmgzpjdIVxum9tj4Zaov1jNuSGMLssPxRhZ7lxqlpuEtLT0TEed0RAqhGfx2YFVC+imCJOmkVHg==
 
 qs@6.7.0:
   version "6.7.0"

@@ -67,7 +67,6 @@ export const registerAndDispatchVaccines = async (
     );
 
     if (!patients.length) {
-      console.log("hi");
       return true;
     }
 

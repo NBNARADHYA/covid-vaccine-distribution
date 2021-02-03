@@ -109,7 +109,7 @@ export const ViewAdmin = ({ history }) => {
         setRegisteredPatients(newRegisteredPatients);
       })
       .catch(async (err) => {
-        console.log(err);
+        console.error(err);
         await logout(setAccessToken);
       });
   }, [adminEmail, setAccessToken, accessToken, lastNumDays, nextNumDays]);

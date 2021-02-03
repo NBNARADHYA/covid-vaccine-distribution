@@ -1,7 +1,7 @@
 import { getConnection } from "typeorm";
 import { PatientProfile } from "../../../entity/PatientProfile";
 import { User } from "../../../entity/User";
-import fetch, { RequestInit } from "node-fetch";
+import { pythonExec } from "../../utils/pythonExec";
 
 export interface AddPatientProfileProps extends PatientProfile {
   user: User;
@@ -68,12 +68,8 @@ export const addPatientProfile = async ({
     await dbConnection.getRepository(PatientProfile).insert(patientProfile);
 
     // Call ML model to get covidVulnerabilityScore
-    const requestOptions: RequestInit = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const result = await pythonExec("mlModel/app.py", [
+      JSON.stringify({
         sex,
         patientType,
         intubed,
@@ -95,10 +91,14 @@ export const addPatientProfile = async ({
         ageBand,
         deltaDate: getDateDiff(dateEntry, dateSymptoms),
       }),
-    };
+    ]);
 
-    const res = await fetch(`${process.env.MODEL_SERVER}/`, requestOptions);
-    const { death_prob: covidVulnerabilityScore } = await res.json();
+    if (result.length !== 1) throw new Error("Internal server error");
+
+    const covidVulnerabilityScore = parseFloat(result[0]!);
+
+    if (isNaN(covidVulnerabilityScore) || covidVulnerabilityScore === 2)
+      throw new Error("Internal server error");
 
     // Update covidVulnerabilityScore in the user table
     await dbConnection
@@ -110,6 +110,7 @@ export const addPatientProfile = async ({
 
     return true;
   } catch (error) {
+    console.log(error);
     throw new Error("Internal Server error");
   }
 };
