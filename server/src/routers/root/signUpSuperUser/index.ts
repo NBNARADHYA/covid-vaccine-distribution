@@ -1,10 +1,10 @@
 import { Request, Response, Router } from "express";
-import { signUpAdmin } from "../../models/su/signUpAdmin";
-import { validate } from "../auth/signUp/validate";
+import { signUp } from "../../../models/auth/signUp";
+import { validate } from "../../auth/signUp/validate";
 
-export const signUpAdminRouter = Router();
+export const signUpSuperUserRouter = Router();
 
-signUpAdminRouter.post(
+signUpSuperUserRouter.post(
   "/",
   async (req: Request, res: Response): Promise<Response> => {
     const errors: string[] = validate(req.body);
@@ -12,7 +12,7 @@ signUpAdminRouter.post(
     if (errors.length) return res.status(400).send({ errors });
 
     try {
-      await signUpAdmin(req.body);
+      await signUp({ ...req.body, isSuperUser: true });
 
       return res.status(200).send({ success: true });
     } catch (error) {

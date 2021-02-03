@@ -6,8 +6,6 @@ import {
   TextField,
   Button,
   Snackbar,
-  FormControlLabel,
-  Checkbox,
   Input,
 } from "@material-ui/core";
 import { Form, Formik, Field, ErrorMessage } from "formik";
@@ -57,10 +55,7 @@ export const SignUp = ({ history }) => {
   const [lat, setLat] = useState(null);
   const [lng, setLng] = useState(null);
   const [location, setLocation] = useState("");
-  const {
-    accessToken,
-    user: { isAdmin },
-  } = useContext(AccessTokenContext);
+  const { accessToken } = useContext(AccessTokenContext);
 
   const setContainer = useAlgoliaPlaces({
     options: {
@@ -89,7 +84,7 @@ export const SignUp = ({ history }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (accessToken && !isAdmin) {
+  if (accessToken) {
     history.push("/");
     return null;
   }
@@ -102,21 +97,17 @@ export const SignUp = ({ history }) => {
         autoHideDuration={6000}
         onClose={() => {
           setSuccess(false);
-          history.push(`/${isAdmin ? `signup` : `login`}`);
+          history.push(`/login`);
         }}
       >
         <Alert
           onClose={() => {
             setSuccess(false);
-            history.push(`/${isAdmin ? `signup` : `login`}`);
+            history.push(`/login`);
           }}
           severity="success"
         >
-          {`${isAdmin ? `Admin` : ``} Account created successfully! ${
-            isAdmin
-              ? `Ask the new admin to verify his/her email`
-              : `Verify your email`
-          } !`}
+          {`Account created successfully! Verify your email !`}
         </Alert>
       </Snackbar>
     );
@@ -166,9 +157,7 @@ export const SignUp = ({ history }) => {
           setSubmitting(true);
           try {
             let res = await fetch(
-              `${process.env.REACT_APP_SERVER}/${
-                isAdmin ? `su/signup_admin` : `auth/signup`
-              }`,
+              `${process.env.REACT_APP_SERVER}/auth/signup`,
               {
                 method: "POST",
                 headers: {
@@ -232,17 +221,6 @@ export const SignUp = ({ history }) => {
                   fullWidth
                 />
                 <ErrorMessage name="password" component={ErrorAlert} />
-              </Grid>
-              <Grid item container xs={12} justify="flex-start">
-                {isAdmin && (
-                  <Grid item xs={6}>
-                    <FormControlLabel
-                      disabled
-                      control={<Checkbox checked />}
-                      label="Admin ?"
-                    />
-                  </Grid>
-                )}
               </Grid>
               <Grid item xs={12}>
                 <Input

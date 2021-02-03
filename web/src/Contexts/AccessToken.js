@@ -12,6 +12,7 @@ const unauthorizedUser = {
   exp: Date.now() - 1000,
   vaccinationDate: null,
 };
+
 const initialPayload = initialAccessToken
   ? jwtDecode(initialAccessToken)
   : unauthorizedUser;
@@ -33,7 +34,9 @@ const AccessTokenProvider = ({ children }) => {
 
   useEffect(() => {
     refreshToken()
-      .then((res) => res && setAccessToken(res))
+      .then((res) =>
+        res.error ? console.error(res.error) : res && setAccessToken(res)
+      )
       .catch(console.error);
   }, [user]);
 

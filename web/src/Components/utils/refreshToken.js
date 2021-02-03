@@ -10,7 +10,7 @@ export const refreshToken = async (setAccessToken) => {
       }
     );
     const { error, accessToken } = await res.json();
-    if (error) {
+    if (error || !accessToken) {
       setAccessToken && setAccessToken(undefined);
       return false;
     } else {

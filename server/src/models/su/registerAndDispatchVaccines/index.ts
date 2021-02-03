@@ -40,21 +40,24 @@ export const registerAndDispatchVaccines = async (
               ST_GeomFromGeoJSON($1)::geography
             ) AS dist 
             FROM "user" "admin"
-            WHERE "admin"."isAdmin" = $2 AND "admin"."isSuperUser" = $3
+            WHERE "admin"."isAdmin" = $2 AND "admin"."isSuperUser" = $3 AND "admin"."isRoot" = $4
             ORDER BY "admin"."location" <-> patient.location ASC LIMIT 1
           ) "nearestAdmin" 
         ON TRUE
         WHERE
-          "patient"."isVaccinated" = $4 AND 
+          "patient"."isVaccinated" = $5 AND 
           "patient"."vaccinationDate" IS NULL AND 
-          "patient"."isAdmin" = $5 AND
-          "patient"."isSuperUser" = $6 AND
+          "patient"."isRoot" = $6 AND
+          "patient"."isSuperUser" = $7 AND
+          "patient"."isAdmin" = $8 AND
           "patient"."covidVulnerabilityScore" IS NOT NULL
         ORDER BY "patient"."covidVulnerabilityScore" DESC
-        LIMIT $7`,
+        LIMIT $9`,
       [
         JSON.stringify(suLocation),
         true,
+        false,
+        false,
         false,
         false,
         false,
@@ -64,7 +67,6 @@ export const registerAndDispatchVaccines = async (
     );
 
     if (!patients.length) {
-      console.log("hi");
       return true;
     }
 

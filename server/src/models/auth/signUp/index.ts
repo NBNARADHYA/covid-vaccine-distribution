@@ -11,31 +11,38 @@ export interface SignUpProps {
   password: string;
   lat: number;
   lng: number;
+  isRoot?: boolean;
+  isSuperUser?: boolean;
+  isAdmin?: boolean;
 }
 
 export const signUp = async ({
-  firstName,
-  lastName,
-  email,
   password,
   lat,
   lng,
+  isRoot,
+  ...restUserDetails
 }: SignUpProps): Promise<boolean> => {
   const dbConnection = getConnection();
 
+  let user = new User();
+
+  user = Object.assign<User, typeof restUserDetails>(user, restUserDetails);
+
   const hashedPassword = await hash(password, 10);
-
-  const verifyEmailHash = genHash();
-
-  const user = new User();
-  user.firstName = firstName;
-  if (lastName) user.lastName = lastName;
-  user.email = email;
   user.password = hashedPassword;
+
   user.location = {
     type: "Point",
     coordinates: [lat, lng],
   };
+
+  if (isRoot) {
+    user.isRoot = true;
+    user.isVerified = true;
+  }
+
+  const verifyEmailHash = genHash();
   user.verifyEmailHash = verifyEmailHash;
 
   try {
@@ -44,16 +51,15 @@ export const signUp = async ({
     throw new Error(error);
   }
 
-  sendMail({
-    to: email,
-    html: `<div>Click 
+  !isRoot &&
+    sendMail({
+      to: restUserDetails.email,
+      html: `<div>Click 
             <a href="${process.env.WEB}/auth/verify_email?verify_email_hash=${verifyEmailHash}">here</a>
             to verify your email
           </div>`,
-    subject: "Verify your email",
-  }).catch(console.error);
-
-  console.log(verifyEmailHash);
+      subject: "Verify your email",
+    }).catch(console.error);
 
   return true;
 };

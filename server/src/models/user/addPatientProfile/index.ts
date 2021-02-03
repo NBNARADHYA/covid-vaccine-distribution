@@ -1,7 +1,7 @@
 import { getConnection } from "typeorm";
 import { PatientProfile } from "../../../entity/PatientProfile";
 import { User } from "../../../entity/User";
-import fetch, { RequestInit } from "node-fetch";
+import { pythonExec } from "../../utils/pythonExec";
 
 export interface AddPatientProfileProps extends PatientProfile {
   user: User;
@@ -14,102 +14,72 @@ const getDateDiff = (date1: string, date2: string): number => {
 };
 
 export const addPatientProfile = async ({
-  ageBand,
-  asthma,
-  cardiovascular,
-  contactOtherCovid,
-  copd,
   dateSymptoms,
-  covidTestResult,
-  diabetes,
-  hypertension,
-  icu,
-  inmsupr,
-  intubed,
-  obesity,
-  otherDisease,
-  patientType,
-  pneumonia,
-  pregnancy,
-  renalChronic,
-  sex,
-  tobacco,
   user,
+  ...restPatientDetails
 }: AddPatientProfileProps): Promise<boolean> => {
   const dbConnection = getConnection();
 
-  const patientProfile = new PatientProfile();
+  const queryRunner = dbConnection.createQueryRunner();
+
+  // Start a transaction
+  await queryRunner.startTransaction();
+
+  let patientProfile = new PatientProfile();
+
+  patientProfile = Object.assign<PatientProfile, typeof restPatientDetails>(
+    patientProfile,
+    restPatientDetails
+  );
 
   const dateEntry: string = new Date().toISOString();
 
-  patientProfile.ageBand = ageBand;
-  patientProfile.asthma = asthma;
-  patientProfile.cardiovascular = cardiovascular;
-  patientProfile.contactOtherCovid = contactOtherCovid;
-  patientProfile.copd = copd;
   patientProfile.dateSymptoms = new Date(dateSymptoms).toISOString();
-  patientProfile.covidTestResult = covidTestResult;
-  patientProfile.diabetes = diabetes;
-  patientProfile.hypertension = hypertension;
-  patientProfile.icu = icu;
-  patientProfile.inmsupr = inmsupr;
-  patientProfile.intubed = intubed;
-  patientProfile.obesity = obesity;
-  patientProfile.otherDisease = otherDisease;
-  patientProfile.patientType = patientType;
-  patientProfile.pneumonia = pneumonia;
-  patientProfile.pregnancy = pregnancy;
-  patientProfile.renalChronic = renalChronic;
-  patientProfile.sex = sex;
-  patientProfile.tobacco = tobacco;
   patientProfile.dateEntry = dateEntry;
 
   try {
-    await dbConnection.getRepository(PatientProfile).insert(patientProfile);
+    await queryRunner.manager
+      .getRepository(PatientProfile)
+      .insert(patientProfile);
 
     // Call ML model to get covidVulnerabilityScore
-    const requestOptions: RequestInit = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        sex,
-        patientType,
-        intubed,
-        pneumonia,
-        pregnancy,
-        diabetes,
-        copd,
-        asthma,
-        inmsupr,
-        hypertension,
-        otherDisease,
-        cardiovascular,
-        obesity,
-        renalChronic,
-        tobacco,
-        contactOtherCovid,
-        covidTestResult,
-        icu,
-        ageBand,
+    const result = await pythonExec("mlModel/app.py", [
+      JSON.stringify({
+        ...restPatientDetails,
         deltaDate: getDateDiff(dateEntry, dateSymptoms),
       }),
-    };
+    ]);
 
-    const res = await fetch(`${process.env.MODEL_SERVER}/`, requestOptions);
-    const { death_prob: covidVulnerabilityScore } = await res.json();
+    if (result.length !== 1) {
+      // Rollback
+      await queryRunner.rollbackTransaction();
+      throw new Error("Internal server error");
+    }
+
+    const covidVulnerabilityScore = parseFloat(result[0]!);
+
+    if (isNaN(covidVulnerabilityScore) || covidVulnerabilityScore === 2) {
+      // Rollback
+      await queryRunner.rollbackTransaction();
+      throw new Error("Internal server error");
+    }
 
     // Update covidVulnerabilityScore in the user table
-    await dbConnection
+    await queryRunner.manager
       .getRepository(User)
       .update(
         { email: user.email },
         { patientProfile, covidVulnerabilityScore }
       );
 
+    // Commit transaction
+    await queryRunner.commitTransaction();
+
     return true;
   } catch (error) {
+    queryRunner.rollbackTransaction();
     throw new Error("Internal Server error");
+  } finally {
+    queryRunner.release();
   }
 };

@@ -20,8 +20,9 @@ export const getPatientTrend = async (
       .select(`COUNT(email) AS count`)
       .addSelect(`"isVaccinated"`)
       .addSelect(`"vaccinationDate"`)
-      .where(`"isAdmin" = false`)
+      .where(`"isRoot" = false`)
       .andWhere(`"isSuperUser" = false`)
+      .andWhere(`"isAdmin" = false`)
       .andWhere(`"adminEmail" IS NOT NULL`)
       .andWhere(`"vaccinationTimeSlot" IS NOT NULL`);
 
