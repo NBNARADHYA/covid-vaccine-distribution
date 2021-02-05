@@ -2,8 +2,34 @@ import pandas as pd
 import numpy as np
 import pickle
 from sklearn.tree import DecisionTreeRegressor
+from fastapi import FastAPI
+from pydantic import BaseModel
 import json
 import sys
+
+
+class PatientDetails(BaseModel):
+    sex: int
+    patientType: int
+    intubed: int
+    pneumonia: int
+    pregnancy: int
+    diabetes: int
+    copd: int
+    asthma: int
+    inmsupr: int
+    hypertension: int
+    otherDisease: int
+    cardiovascular: int
+    obesity: int
+    renalChronic: int
+    tobacco: int
+    contactOtherCovid: int
+    covidTestResult: int
+    icu: int
+    ageBand: int
+    deltaDate: int
+
 
 column_names = ['sex', 'patient_type', 'intubed', 'pneumonia', 'pregnancy',
                 'diabetes', 'copd', 'asthma', 'inmsupr', 'hypertension',
@@ -24,24 +50,20 @@ def get_score(filename, X):
     return score
 
 
-def get_covid_score(inputs):
+app = FastAPI()
+
+
+@app.post("/score/")
+async def get_covid_score(inputs: PatientDetails):
     X = np.zeros((1, len(my_column_names)))
 
     for ind in range(len(my_column_names)):
-        X[0][ind] = inputs[my_column_names[ind]]
+        X[0][ind] = getattr(inputs, my_column_names[ind])
 
     X = pd.DataFrame(X, columns=column_names)
 
-    death_prob = get_score('mlModel/reg.sav', X)
+    death_prob = get_score('reg.sav', X)
 
-    return death_prob[0]
-
-
-if __name__ == "__main__":
-    input_string = sys.argv[1]
-
-    if input_string == "":
-        print(2)
-    else:
-        inputs = json.loads(input_string)
-        print(get_covid_score(inputs))
+    return {
+        "death_prob": death_prob[0]
+    }

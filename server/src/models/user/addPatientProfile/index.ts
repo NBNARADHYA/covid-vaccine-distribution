@@ -1,7 +1,7 @@
+import fetch from "node-fetch";
 import { getConnection } from "typeorm";
 import { PatientProfile } from "../../../entity/PatientProfile";
 import { User } from "../../../entity/User";
-import { pythonExec } from "../../utils/pythonExec";
 
 export interface AddPatientProfileProps extends PatientProfile {
   user: User;
@@ -43,26 +43,18 @@ export const addPatientProfile = async ({
       .insert(patientProfile);
 
     // Call ML model to get covidVulnerabilityScore
-    const result = await pythonExec("mlModel/app.py", [
-      JSON.stringify({
+    const res = await fetch(`${process.env.MODEL_SERVER}/score/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
         ...restPatientDetails,
         deltaDate: getDateDiff(dateEntry, dateSymptoms),
       }),
-    ]);
+    });
 
-    if (result.length !== 1) {
-      // Rollback
-      await queryRunner.rollbackTransaction();
-      throw new Error("Internal server error");
-    }
-
-    const covidVulnerabilityScore = parseFloat(result[0]!);
-
-    if (isNaN(covidVulnerabilityScore) || covidVulnerabilityScore === 2) {
-      // Rollback
-      await queryRunner.rollbackTransaction();
-      throw new Error("Internal server error");
-    }
+    const { death_prob: covidVulnerabilityScore } = await res.json();
 
     // Update covidVulnerabilityScore in the user table
     await queryRunner.manager
