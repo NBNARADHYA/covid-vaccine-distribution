@@ -87,7 +87,7 @@ upstream	https://github.com/NBNARADHYA/ey-techathon (push)
 5. The above command could be run in detached mode with `-d` flag as `docker-compose up -d`.
 6. For help, run the command `docker-compose -h`.
 
-### Method 2 `(not recommended): Setup`server`, `web`and`model` independently
+### Method 2 (not recommended): Setup `services` independently
 
 #### Setup `server`
 
@@ -99,7 +99,7 @@ upstream	https://github.com/NBNARADHYA/ey-techathon (push)
 
 ##### Steps
 
-1. Run `cd server`
+1. Run `cd services/server`
 2. Setup environmental variables according to `.example.env`
 3. Run `yarn install`
 4. Run `yarn run dev` to start the server
@@ -108,7 +108,7 @@ upstream	https://github.com/NBNARADHYA/ey-techathon (push)
 
 ##### Steps
 
-1. Run `cd web`
+1. Run `cd services/web`
 2. Setup environmental variables according to `.example.env`
 3. Run `yarn install`
 4. Run `yarn start` to start the server
@@ -122,7 +122,7 @@ upstream	https://github.com/NBNARADHYA/ey-techathon (push)
 
 ##### Steps
 
-1. Run `cd model`
+1. Run `cd services/model`
 2. Run `python3 -m venv venv` to create a virtual environment
 3. Activate `venv` by running `. venv/bin/activate`
 4. Run `pip3 install -r requirements.txt` to install packages

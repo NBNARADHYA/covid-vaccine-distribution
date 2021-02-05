@@ -15,40 +15,37 @@ services:
 
   model:
     build:
-      context: ./model
+      context: ./services/model
       dockerfile: Dockerfile.dev
     container_name: model
-    restart: unless-stopped
     volumes:
-      - ./model/:/usr/app
+      - ./services/model/:/usr/app
 
   server:
     build:
-      context: ./server
+      context: ./services/server
       dockerfile: Dockerfile.dev
     container_name: server
-    restart: unless-stopped
-    env_file: ./server/.env
+    env_file: ./services/server/.env
     depends_on:
       - db
       - model
     volumes:
-      - ./server/:/usr/app
+      - ./services/server/:/usr/app
       - node_modules_server:/usr/app/node_modules
     ports:
       - "${SERVER_PORT}:${SERVER_PORT}"
 
   web:
     build:
-      context: ./web
+      context: ./services/web
       dockerfile: Dockerfile.dev
     container_name: web
-    restart: unless-stopped
-    env_file: ./web/.env
+    env_file: ./services/web/.env
     depends_on:
       - server
     volumes:
-      - ./web/:/usr/app
+      - ./services/web/:/usr/app
       - node_modules_web:/usr/app/node_modules
     ports:
       - "${WEB_PORT}:${WEB_PORT}"
