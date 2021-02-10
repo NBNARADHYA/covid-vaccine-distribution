@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgis/postgis
+    container_name: db
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT_HOST}:5432"
+
+  model:
+    build:
+      context: ./services/model
+      dockerfile: Dockerfile.dev
+    container_name: model
+    volumes:
+      - ./services/model/:/usr/app
+
+  server:
+    build:
+      context: ./services/server
+      dockerfile: Dockerfile.dev
+    container_name: server
+    env_file: ./services/server/.env
+    depends_on:
+      - db
+      - model
+    volumes:
+      - ./services/server/:/usr/app
+      - node_modules_server:/usr/app/node_modules
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+
+  web:
+    build:
+      context: ./services/web
+      dockerfile: Dockerfile.dev
+    container_name: web
+    env_file: ./services/web/.env
+    depends_on:
+      - server
+    volumes:
+      - ./services/web/:/usr/app
+      - node_modules_web:/usr/app/node_modules
+    ports:
+      - "${WEB_PORT}:${WEB_PORT}"
+
+volumes:
+  dbdata:
+  node_modules_server:
+  node_modules_web:
