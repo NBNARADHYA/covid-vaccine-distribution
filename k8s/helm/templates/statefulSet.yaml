@@ -1,0 +1,56 @@
+{{- if .Values.statefulSet.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.statefulSet.name }}
+  labels:
+    app: {{ .Values.app }}
+spec:
+  serviceName: {{ .Values.service.name }}
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app }}
+    spec:
+      containers:
+      - name: {{ .Values.statefulSet.container.name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        {{- if .Values.env.enabled }}
+        {{- if .Values.env.arr }}
+        env:
+        {{- range .Values.env.envs }}
+          - name: {{ .name }}
+            {{- if .configMapRef }}
+            valueFrom: 
+              configMapKeyRef:
+                name: {{ .configMapRef }}
+                key: {{ .key }}
+            {{- else }}
+            value: {{ .value }}
+            {{- end }}
+        {{- end }}
+        {{- else }}
+        envFrom:
+          - configMapRef:
+              name: {{ .Values.env.configMapRef }}
+        {{- end }}
+        {{- end }}
+        ports:
+        - containerPort: {{ .Values.statefulSet.container.port }}
+        {{- if .Values.statefulSet.container.volumeMounts.enabled }}
+        volumeMounts:
+        - name: {{ .Values.statefulSet.container.volumeMounts.name }}
+          mountPath: {{ .Values.statefulSet.container.volumeMounts.path }}
+          subPath: {{ .Values.statefulSet.container.volumeMounts.subPath }}
+        {{- end }}
+      {{- if .Values.statefulSet.container.volumeMounts.enabled }}
+      volumes:
+      - name: {{ .Values.statefulSet.container.volumeMounts.name }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.pvc.name }}
+      {{- end }}
+{{- end }}
