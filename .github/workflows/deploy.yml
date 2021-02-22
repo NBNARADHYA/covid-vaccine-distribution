@@ -3,29 +3,29 @@ name: deploy
 on:
   push:
     branches:
-      - kubernetes
+      - master
 
 jobs:
-  # server-change-check:
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     changed: ${{ steps.server-changed.outputs.changed }}
-  #   steps:
-  #     - name: Checkout code to the VM
-  #       uses: actions/checkout@v2
-  #       with:
-  #         fetch-depth: 100
+  server-change-check:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.server-changed.outputs.changed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 100
 
-  #     - name: Check if server folder has changed
-  #       uses: marceloprado/has-changed-path@v1
-  #       id: server-changed
-  #       with:
-  #         paths: services/server k8s/helm/templates
+      - name: Check if server folder has changed
+        uses: marceloprado/has-changed-path@v1
+        id: server-changed
+        with:
+          paths: services/server k8s/helm/templates
 
   server-deploy:
-    # needs: server-change-check
+    needs: server-change-check
 
-    # if: needs.server-change-check.outputs.changed == 'true'
+    if: needs.server-change-check.outputs.changed == 'true'
 
     runs-on: ubuntu-latest
 
@@ -33,43 +33,40 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      # - name: Docker meta
-      #   id: docker_meta
-      #   uses: crazy-max/ghaction-docker-meta@v1
-      #   with:
-      #     images: nbnaradhya/covid-vaccine-distribution-server
-      #     tag-sha: true
+      - name: Docker meta
+        id: docker_meta
+        uses: crazy-max/ghaction-docker-meta@v1
+        with:
+          images: nbnaradhya/covid-vaccine-distribution-server
+          tag-sha: true
 
-      # - name: Set up QEMU
-      #   uses: docker/setup-qemu-action@v1
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
 
-      # - name: Set up Docker Buildx
-      #   uses: docker/setup-buildx-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
-      # - name: Login to DockerHub
-      #   uses: docker/login-action@v1
-      #   with:
-      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
-      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # - name: Build and push
-      #   id: docker_build
-      #   uses: docker/build-push-action@v2
-      #   with:
-      #     context: ./services/server
-      #     push: true
-      #     tags: ${{ steps.docker_meta.outputs.tags }}
-      #     labels: ${{ steps.docker_meta.outputs.labels }}
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: ./services/server
+          push: true
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
 
-      # - name: Image digest
-      #   run: echo ${{ steps.docker_build.outputs.digest }}
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
 
       - name: Install helm
         shell: bash
-        run: |
-          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-          chmod 700 get_helm.sh
-          ./get_helm.sh
+        run: .github/scripts/install_helm.sh
 
       - name: Deploy server service
         shell: bash
@@ -77,29 +74,74 @@ jobs:
           KUBERNETES_CLUSTER_CERTIFICATE: ${{ secrets.KUBERNETES_CLUSTER_CERTIFICATE }}
           KUBERNETES_SERVER: ${{ secrets.KUBERNETES_SERVER }}
           KUBERNETES_TOKEN: ${{ secrets.KUBERNETES_TOKEN }}
-        run: |
-          echo "$KUBERNETES_CLUSTER_CERTIFICATE" > ca.crt
+        run: .github/scripts/helm_deploy.sh server
 
-          helm upgrade server ./k8s/helm \
-          --install \
-          --kube-apiserver "$KUBERNETES_SERVER" \
-          --kube-ca-file ca.crt \
-          --kube-token "$KUBERNETES_TOKEN" \
-          --kubeconfig /dev/null \
-          -f ./services/server/helm-values.yaml
+  model-change-check:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.model-changed.outputs.changed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 100
 
-      # - name: Deploy server service
-      #   uses: deliverybot/helm@v1
-      #   with:
-      #     release: server
-      #     namespace: default
-      #     helm: "helm3"
-      #     chart: k8s/helm
-      #     token: ${{ github.token }}
-      #     version: ${{ github.sha }}
-      #     value-files: services/server/helm-values.yaml
-      #   env:
-      #     KUBECONFIG: ${{ secrets.KUBECONFIG }}
-      #     HELM_KUBEAPISERVER: ${{ secrets.KUBERNETES_SERVER }}
-      #     HELM_KUBECAFILE: cert.crt
-      #     HELM_KUBETOKEN: ${{ secrets.KUBERNETES_TOKEN }}
+      - name: Check if model folder has changed
+        uses: marceloprado/has-changed-path@v1
+        id: model-changed
+        with:
+          paths: services/model k8s/helm/templates
+
+  model-deploy:
+    needs: model-change-check
+
+    if: needs.model-change-check.outputs.changed == 'true'
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Docker meta
+        id: docker_meta
+        uses: crazy-max/ghaction-docker-meta@v1
+        with:
+          images: nbnaradhya/covid-vaccine-distribution-model
+          tag-sha: true
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: ./services/model
+          push: true
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
+
+      - name: Install helm
+        shell: bash
+        run: .github/scripts/install_helm.sh
+
+      - name: Deploy model service
+        shell: bash
+        env:
+          KUBERNETES_CLUSTER_CERTIFICATE: ${{ secrets.KUBERNETES_CLUSTER_CERTIFICATE }}
+          KUBERNETES_SERVER: ${{ secrets.KUBERNETES_SERVER }}
+          KUBERNETES_TOKEN: ${{ secrets.KUBERNETES_TOKEN }}
+        run: .github/scripts/helm_deploy.sh model
