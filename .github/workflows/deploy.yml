@@ -20,7 +20,7 @@ jobs:
         uses: marceloprado/has-changed-path@v1
         id: server-changed
         with:
-          paths: services/server k8s/helm/templates
+          paths: services/server k8s/helm/templates .github
 
   server-deploy:
     needs: server-change-check
@@ -91,7 +91,7 @@ jobs:
         uses: marceloprado/has-changed-path@v1
         id: model-changed
         with:
-          paths: services/model k8s/helm/templates
+          paths: services/model k8s/helm/templates .github
 
   model-deploy:
     needs: model-change-check
