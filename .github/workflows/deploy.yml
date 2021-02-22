@@ -6,26 +6,26 @@ on:
       - kubernetes
 
 jobs:
-  server-change-check:
-    runs-on: ubuntu-latest
-    outputs:
-      changed: ${{ steps.server-changed.outputs.changed }}
-    steps:
-      - name: Checkout code to the VM
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 100
+  # server-change-check:
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     changed: ${{ steps.server-changed.outputs.changed }}
+  #   steps:
+  #     - name: Checkout code to the VM
+  #       uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 100
 
-      - name: Check if server folder has changed
-        uses: marceloprado/has-changed-path@v1
-        id: server-changed
-        with:
-          paths: services/server k8s/helm/templates
+  #     - name: Check if server folder has changed
+  #       uses: marceloprado/has-changed-path@v1
+  #       id: server-changed
+  #       with:
+  #         paths: services/server k8s/helm/templates
 
   server-deploy:
-    needs: server-change-check
+    # needs: server-change-check
 
-    if: needs.server-change-check.outputs.changed == 'true'
+    # if: needs.server-change-check.outputs.changed == 'true'
 
     runs-on: ubuntu-latest
 
@@ -33,44 +33,51 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Docker meta
-        id: docker_meta
-        uses: crazy-max/ghaction-docker-meta@v1
-        with:
-          images: nbnaradhya/covid-vaccine-distribution-server
-          tag-sha: true
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          context: ./services/server
-          push: true
-          tags: ${{ steps.docker_meta.outputs.tags }}
-          labels: ${{ steps.docker_meta.outputs.labels }}
-
-      - name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
-
-      # - name: Deploy server service
-      #   uses: "deliverybot/helm@v1"
+      # - name: Docker meta
+      #   id: docker_meta
+      #   uses: crazy-max/ghaction-docker-meta@v1
       #   with:
-      #     release: "server"
-      #     namespace: "default"
-      #     chart: "k8s/helm"
-      #     token: "${{ github.token }}"
-      #     value-files: "services/server/helm-values.yml"
-      #   env:
-      #     KUBECONFIG_FILE: "${{ secrets.KUBECONFIG }}"
+      #     images: nbnaradhya/covid-vaccine-distribution-server
+      #     tag-sha: true
+
+      # - name: Set up QEMU
+      #   uses: docker/setup-qemu-action@v1
+
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v1
+
+      # - name: Login to DockerHub
+      #   uses: docker/login-action@v1
+      #   with:
+      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
+      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # - name: Build and push
+      #   id: docker_build
+      #   uses: docker/build-push-action@v2
+      #   with:
+      #     context: ./services/server
+      #     push: true
+      #     tags: ${{ steps.docker_meta.outputs.tags }}
+      #     labels: ${{ steps.docker_meta.outputs.labels }}
+
+      # - name: Image digest
+      #   run: echo ${{ steps.docker_build.outputs.digest }}
+
+      - name: Dump CA details
+        run: |
+          echo "$KUBERNETES_CLUSTER_CERTIFICATE" | base64 --decode > cert.crt
+
+      - name: Deploy server service
+        uses: deliverybot/helm@v1
+        with:
+          release: server
+          namespace: default
+          chart: k8s/helm
+          token: ${{ github.token }}
+          value-files: services/server/helm-values.yaml
+        env:
+          KUBECONFIG_FILE: ${{ secrets.KUBECONFIG }}
+          HELM_KUBEAPISERVER: ${{ secrets.KUBERNETES_SERVER }}
+          HELM_KUBECAFILE: cert.crt
+          HELM_KUBETOKEN: ${{ secrets.KUBERNETES_TOKEN }}
