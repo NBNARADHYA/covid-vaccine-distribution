@@ -79,17 +79,11 @@ set_kube_config_values() {
         --kubeconfig="${KUBECFG_FILE_NAME}"
 }
 
-emit_kubeconfig() {
-    echo -n "This is kubeconfig file..."
-    cat "${KUBECFG_FILE_NAME}" | base64
-}
-
 create_service_account
 get_secret_name_from_service_account
 extract_ca_crt_from_secret
 get_user_token_from_secret
 set_kube_config_values
-emit_kubeconfig
 
 echo -e "\\nAll done! Test with:"
 echo "KUBECONFIG=${KUBECFG_FILE_NAME} kubectl get pods"
