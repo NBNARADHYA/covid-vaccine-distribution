@@ -11,4 +11,5 @@ helm upgrade $SERVICE_NAME ./k8s/helm \
     --kube-ca-file ca.crt \
     --kube-token "$KUBERNETES_TOKEN" \
     --kubeconfig /dev/null \
-    -f ./services/$SERVICE_NAME/helm-values.yaml
+    -f ./services/$SERVICE_NAME/helm-values.yaml \
+    --set image.tag=$IMAGE_TAG
