@@ -12,4 +12,4 @@ helm upgrade "$SERVICE_NAME" ./k8s/helm \
   --kube-token "$KUBERNETES_TOKEN" \
   --kubeconfig /dev/null \
   -f ./services/"$SERVICE_NAME"/helm-values.yaml \
-  --set image.tag="$IMAGE_TAG"
+  --set image.tag="sha-${GITHUB_SHA::7}"

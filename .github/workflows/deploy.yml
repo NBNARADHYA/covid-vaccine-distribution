@@ -74,7 +74,6 @@ jobs:
           KUBERNETES_CLUSTER_CERTIFICATE: ${{ secrets.KUBERNETES_CLUSTER_CERTIFICATE }}
           KUBERNETES_SERVER: ${{ secrets.KUBERNETES_SERVER }}
           KUBERNETES_TOKEN: ${{ secrets.KUBERNETES_TOKEN }}
-          IMAGE_TAG: ${{ github.sha }}
         run: .github/scripts/helm_deploy.sh server
 
   model-change-check:
@@ -145,5 +144,4 @@ jobs:
           KUBERNETES_CLUSTER_CERTIFICATE: ${{ secrets.KUBERNETES_CLUSTER_CERTIFICATE }}
           KUBERNETES_SERVER: ${{ secrets.KUBERNETES_SERVER }}
           KUBERNETES_TOKEN: ${{ secrets.KUBERNETES_TOKEN }}
-          IMAGE_TAG: ${{ github.sha }}
         run: .github/scripts/helm_deploy.sh model
