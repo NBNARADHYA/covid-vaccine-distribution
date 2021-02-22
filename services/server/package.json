@@ -43,6 +43,7 @@
   },
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon --exec ts-node src/index.ts",
-    "build": "tsc -b"
+    "build": "tsc -b",
+    "start": "cross-env NODE_ENV=production node src/index.js"
   }
 }

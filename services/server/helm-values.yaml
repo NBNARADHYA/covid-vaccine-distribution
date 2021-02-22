@@ -1,0 +1,88 @@
+app: server
+
+replicaCount: 3
+
+image:
+  repository: nbnaradhya/covid-vaccine-distribution-server
+  pullPolicy: IfNotPresent
+  tag: master
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  {}
+  # fsGroup: 2000
+
+securityContext:
+  {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+env:
+  enabled: true
+  arr: false
+  configMapRef: server-configmap
+
+deployment:
+  enabled: true
+  name: server
+  container:
+    name: server
+    port: 5000
+    volumeMounts:
+      enabled: false
+
+pvc:
+  enabled: false
+  # name: db-pvc
+  # accessMode: ReadWriteOnce
+  # storage: 5Gi
+  # storageClassName: do-block-storage
+
+statefulSet:
+  enabled: false
+  # name: db
+  # container:
+  #   name: db
+  #   port: 5432
+  #   volumeMounts:
+  #     name: db-vol-mount
+  #     path: /var/lib/postgresql/data
+  #     subPath: postgres
+
+service:
+  enabled: true
+  name: server-svc
+  type: LoadBalancer
+  port: 80
+  targetPort: 5000
+  nodePort: 30000
+
+ingress:
+  enabled: false
+  annotations:
+    {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths: []
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+autoscaling:
+  enabled: false
+  # minReplicas: 1
+  # maxReplicas: 100
+  # targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80

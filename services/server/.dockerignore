@@ -7,18 +7,28 @@ STARTING.nd
 
 # Dependency directory
 node_modules
-npm-debug.log
+npm-debug.log*
+npm-error.log*
+yarn-debug.log*
+yarn-error.log*
+.yarnrc
+.yarn/*
 
 # Logs
 logs
 *.log
 
 # TypeScript
-dist
+./dist
 
 # VS Code
 .vscode
 
 # ENV
-.env
-.example.env
+*.env
+
+# Kubernetes
+configmap.yaml
+
+# eslint
+.eslintcache

@@ -1,9 +1,19 @@
-/node_modules
-/dist
-.env*
+# TypeScript
+./dist
 
+# Local env
+.env
+
+# Kubernetes
+configmap.yaml
+
+# npm and yarn
+/node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.yarnrc
+.yarn/*
 
+# eslint
 .eslintcache

@@ -1,0 +1,59 @@
+{{- if .Values.deployment.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.name }}
+  labels:
+    app: {{ .Values.app }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app }}
+    spec:
+      containers:
+        - name: {{ .Values.deployment.container.name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.env.enabled }}
+          {{- if .Values.env.arr }}
+          env:
+          {{- range .Values.env.envs }}
+            - name: {{ .name }}
+              {{- if .configMapRef }}
+              valueFrom: 
+                configMapKeyRef:
+                  name: {{ .configMapRef }}
+                  key: {{ .key }}
+              {{- else }}
+              value: {{ .value }}
+              {{- end }}
+          {{- end }}
+          {{- else }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.env.configMapRef }}
+          {{- end }}
+          {{- end }}
+          ports:
+            - containerPort: {{ .Values.deployment.container.port }}
+              protocol: TCP
+          {{- if .Values.deployment.container.volumeMounts.enabled }}
+          volumeMounts:
+          - name: {{ .Values.deployment.container.volumeMounts.name }}
+            mountPath: {{ .Values.deployment.container.volumeMounts.path }}
+            subPath: {{ .Values.deployment.container.volumeMounts.subPath }}
+          {{- end }}
+      {{- if .Values.deployment.container.volumeMounts.enabled }}
+      volumes:
+        - name: {{ .Values.deployment.container.volumeMounts.name }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.pvc.name }}
+      {{- end }}
+{{- end }}
