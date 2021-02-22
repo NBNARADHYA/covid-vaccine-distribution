@@ -1,0 +1,12 @@
+# master branch
+[context.production]
+
+base = "services/web/"
+publish = "build"
+command = "npm run build"
+
+
+# Skip build and deploy for any other branch
+[context.branch-deploy]
+
+ignore = "exit 0"
