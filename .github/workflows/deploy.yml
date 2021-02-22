@@ -64,20 +64,42 @@ jobs:
       # - name: Image digest
       #   run: echo ${{ steps.docker_build.outputs.digest }}
 
-      - name: Dump CA details
+      - name: Install helm
+        shell: bash
         run: |
-          echo "$KUBERNETES_CLUSTER_CERTIFICATE" | base64 --decode > cert.crt
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
 
       - name: Deploy server service
-        uses: deliverybot/helm@v1
-        with:
-          release: server
-          namespace: default
-          chart: k8s/helm
-          token: ${{ github.token }}
-          value-files: services/server/helm-values.yaml
+        shell: bash
         env:
-          KUBECONFIG_FILE: ${{ secrets.KUBECONFIG }}
-          HELM_KUBEAPISERVER: ${{ secrets.KUBERNETES_SERVER }}
-          HELM_KUBECAFILE: cert.crt
-          HELM_KUBETOKEN: ${{ secrets.KUBERNETES_TOKEN }}
+          KUBERNETES_CLUSTER_CERTIFICATE: ${{ secrets.KUBERNETES_CLUSTER_CERTIFICATE }}
+          KUBERNETES_SERVER: ${{ secrets.KUBERNETES_SERVER }}
+          KUBERNETES_TOKEN: ${{ secrets.KUBERNETES_TOKEN }}
+        run: |
+          echo "$KUBERNETES_CLUSTER_CERTIFICATE" > ca.crt
+
+          helm upgrade server ./k8s/helm \
+          --install \
+          --kube-apiserver "$KUBERNETES_SERVER" \
+          --kube-ca-file ca.crt \
+          --kube-token "$KUBERNETES_TOKEN" \
+          --kubeconfig /dev/null \
+          -f ./services/server/helm-values.yaml
+
+      # - name: Deploy server service
+      #   uses: deliverybot/helm@v1
+      #   with:
+      #     release: server
+      #     namespace: default
+      #     helm: "helm3"
+      #     chart: k8s/helm
+      #     token: ${{ github.token }}
+      #     version: ${{ github.sha }}
+      #     value-files: services/server/helm-values.yaml
+      #   env:
+      #     KUBECONFIG: ${{ secrets.KUBECONFIG }}
+      #     HELM_KUBEAPISERVER: ${{ secrets.KUBERNETES_SERVER }}
+      #     HELM_KUBECAFILE: cert.crt
+      #     HELM_KUBETOKEN: ${{ secrets.KUBERNETES_TOKEN }}
