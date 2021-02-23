@@ -3,6 +3,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.deployment.name }}
+  annotations:
+    {{- if .Values.env.enabled }}
+    configmap.reloader.stakater.com/reload: {{ .Values.env.configMapRef }}
+    {{- end }}
   labels:
     app: {{ .Values.app }}
 spec:
