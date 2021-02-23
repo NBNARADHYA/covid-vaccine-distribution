@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: api-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls:
+    - hosts:
+        - example.com
+      secretName: api-tls
+  rules:
+    - host: example.com
+      http:
+        paths:
+          - backend:
+              serviceName: server-svc
+              servicePort: 80

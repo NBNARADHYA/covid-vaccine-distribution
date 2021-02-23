@@ -4,9 +4,6 @@
 # Local env
 .env
 
-# Kubernetes
-configmap.yaml
-
 # npm and yarn
 /node_modules
 npm-debug.log*

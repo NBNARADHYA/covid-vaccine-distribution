@@ -18,7 +18,7 @@ TARGET_FOLDER="."
 
 create_service_account() {
   echo -e "\\n Creating service account on $NAMESPACE namespace"
-  kubectl apply -f ./sa-config/
+  kubectl apply -f ./sa_config/
 }
 
 get_secret_name_from_service_account() {

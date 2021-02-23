@@ -61,10 +61,9 @@ statefulSet:
 service:
   enabled: true
   name: server-svc
-  type: LoadBalancer
+  type: ClusterIP
   port: 80
   targetPort: 5000
-  nodePort: 30000
 
 ingress:
   enabled: false
