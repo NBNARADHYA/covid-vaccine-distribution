@@ -3,7 +3,7 @@
 
 base = "services/web/"
 publish = "build"
-command = "npm run build"
+command = "yarn run build"
 [[redirects]]
     from = "/*"
     to = "index.html"

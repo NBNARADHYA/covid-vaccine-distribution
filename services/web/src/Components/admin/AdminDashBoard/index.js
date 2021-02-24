@@ -12,6 +12,7 @@ import {
   TextField,
 } from "@material-ui/core";
 import ReactMapGL, { Marker, Popup } from "react-map-gl";
+import mapboxgl from "mapbox-gl";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { Bar } from "react-chartjs-2";
@@ -21,6 +22,9 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { vaccinationStateDetails } from "./vaccinationStateDetails";
 import { logout } from "../../utils/logout";
 import { refreshToken } from "../../utils/refreshToken";
+
+// eslint-disable-next-line import/no-webpack-loader-syntax
+mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
 
 const useStyles = makeStyles((theme) => ({
   submitBtn: {

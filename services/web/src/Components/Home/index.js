@@ -17,6 +17,7 @@ import {
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import { Bar } from "react-chartjs-2";
 import ReactMapGL, { Marker, Popup } from "react-map-gl";
+import mapboxgl from "mapbox-gl";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import SwipeableViews from "react-swipeable-views";
@@ -25,6 +26,9 @@ import { plots } from "./plots";
 import clusters from "../../clusters.json";
 import { getRandomColor } from "../utils/randomColor";
 import { lightenDarkenColor } from "../utils/lightenColor";
+
+// eslint-disable-next-line import/no-webpack-loader-syntax
+mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
