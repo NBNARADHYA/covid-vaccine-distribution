@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ReactMapGL, { Marker, Popup } from "react-map-gl";
+import mapboxgl from "mapbox-gl";
 import { Bar } from "react-chartjs-2";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { useParams } from "react-router-dom";
@@ -21,6 +22,9 @@ import { logout } from "../../utils/logout";
 import { refreshToken } from "../../utils/refreshToken";
 import { vaccinationStateDetails } from "../../admin/AdminDashBoard/vaccinationStateDetails";
 import { useQuery } from "../../hooks/useQuery";
+
+// eslint-disable-next-line import/no-webpack-loader-syntax
+mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
 
 const useStyles = makeStyles((theme) => ({
   submitBtn: {

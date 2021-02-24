@@ -3,7 +3,11 @@ import { Button, Container, Typography } from "@material-ui/core";
 import { useContext, useEffect, useState } from "react";
 import { AccessTokenContext } from "../../../Contexts/AccessToken";
 import ReactMapGL, { Layer, Marker, Popup, Source } from "react-map-gl";
+import mapboxgl from "mapbox-gl";
 import { point, nearestPoint, featureCollection } from "@turf/turf";
+
+// eslint-disable-next-line import/no-webpack-loader-syntax
+mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
 
 export const UserDashBoard = ({ history }) => {
   const {
