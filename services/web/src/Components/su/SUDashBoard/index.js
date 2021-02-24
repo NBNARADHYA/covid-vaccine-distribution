@@ -10,23 +10,22 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import {Alert} from "@material-ui/lab";
-import {ErrorMessage, Field, Form, Formik} from "formik";
+import { Alert } from "@material-ui/lab";
+import { ErrorMessage, Field, Form, Formik } from "formik";
 import mapboxgl from "mapbox-gl";
-import {useCallback, useContext, useEffect, useMemo, useState} from "react";
-import {Bar} from "react-chartjs-2";
-import ReactMapGL, {Marker, Popup} from "react-map-gl";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { Bar } from "react-chartjs-2";
+import ReactMapGL, { Marker, Popup } from "react-map-gl";
 
-import {AccessTokenContext} from "../../../Contexts/AccessToken";
-import {ErrorAlert} from "../../common/ErrorAlert";
-import {logout} from "../../utils/logout";
-import {isTokenExpired, refreshToken} from "../../utils/refreshToken";
+import { AccessTokenContext } from "../../../Contexts/AccessToken";
+import { ErrorAlert } from "../../common/ErrorAlert";
+import { logout } from "../../utils/logout";
+import { isTokenExpired, refreshToken } from "../../utils/refreshToken";
 
 // eslint-disable-next-line import/no-webpack-loader-syntax
-mapboxgl.workerClass =
-    require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
+mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
 
-export const SUDashBoard = ({history}) => {
+export const SUDashBoard = ({ history }) => {
   const {
     user: {
       firstName,
