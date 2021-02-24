@@ -1,21 +1,23 @@
-import React from "react";
-import { Button, Container, Typography } from "@material-ui/core";
-import { useContext, useEffect, useState } from "react";
-import { AccessTokenContext } from "../../../Contexts/AccessToken";
-import ReactMapGL, { Layer, Marker, Popup, Source } from "react-map-gl";
+import {Button, Container, Typography} from "@material-ui/core";
+import {featureCollection, nearestPoint, point} from "@turf/turf";
 import mapboxgl from "mapbox-gl";
-import { point, nearestPoint, featureCollection } from "@turf/turf";
+import React from "react";
+import {useContext, useEffect, useState} from "react";
+import ReactMapGL, {Layer, Marker, Popup, Source} from "react-map-gl";
+
+import {AccessTokenContext} from "../../../Contexts/AccessToken";
 
 // eslint-disable-next-line import/no-webpack-loader-syntax
-mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
+mapboxgl.workerClass =
+    require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
 
-export const UserDashBoard = ({ history }) => {
+export const UserDashBoard = ({history}) => {
   const {
-    user: {
+    user : {
       firstName,
       lastName,
       email,
-      location: { coordinates },
+      location : {coordinates},
       isVaccinated,
       isProfileAdded,
     },
@@ -26,41 +28,35 @@ export const UserDashBoard = ({ history }) => {
   const [shortestPathLine, setShortestPathLine] = useState(null);
   const [nearestAdmin, setNearestAdmin] = useState(null);
   const [viewport, setViewport] = useState({
-    latitude: coordinates[0],
-    longitude: coordinates[1],
-    zoom: 5,
+    latitude : coordinates[0],
+    longitude : coordinates[1],
+    zoom : 5,
   });
 
   useEffect(() => {
     fetch(`${process.env.REACT_APP_SERVER}/admins`)
-      .then((res) => res.json())
-      .then((res) => {
-        setAdmins(res.admins);
-      })
-      .catch(console.error);
+        .then((res) => res.json())
+        .then((res) => { setAdmins(res.admins); })
+        .catch(console.error);
   }, []);
 
   useEffect(() => {
     if (admins.length) {
       const myPoint = point(coordinates);
-      const adminPoints = admins.map(({ location }) =>
-        point(location.coordinates)
-      );
+      const adminPoints =
+          admins.map(({location}) => point(location.coordinates));
       const nearestPt = nearestPoint(myPoint, featureCollection(adminPoints));
-      setNearestAdmin(
-        admins.find(
-          ({ location: { coordinates } }) =>
-            coordinates[0] === nearestPt.geometry.coordinates[0] &&
-            coordinates[1] === nearestPt.geometry.coordinates[1]
-        )
-      );
+      setNearestAdmin(admins.find(
+          ({location : {coordinates}}) =>
+              coordinates[0] === nearestPt.geometry.coordinates[0] &&
+              coordinates[1] === nearestPt.geometry.coordinates[1]));
       setShortestPathLine({
-        type: "Feature",
-        properties: {},
-        geometry: {
-          type: "LineString",
-          coordinates: [
-            [coordinates[1], coordinates[0]],
+        type : "Feature",
+        properties : {},
+        geometry : {
+          type : "LineString",
+          coordinates : [
+            [ coordinates[1], coordinates[0] ],
             [
               nearestPt.geometry.coordinates[1],
               nearestPt.geometry.coordinates[0],
@@ -69,22 +65,23 @@ export const UserDashBoard = ({ history }) => {
         },
       });
     }
-  }, [admins, coordinates]);
+  }, [ admins, coordinates ]);
 
   return (
-    <Container style={{ paddingTop: "3vh" }}>
-      <Typography variant="h4" color="primary" style={{ marginBottom: "3vh" }}>
-        <span style={{ marginRight: "30px" }}>Dashboard</span>
+    <Container style={{
+    paddingTop: "3vh" }}>
+      <Typography variant="h4" color="primary" style={{
+    marginBottom: "3vh" }}>
+        <span style={{
+    marginRight: "30px" }}>Dashboard</span>
         <span>
           <Button
             variant="contained"
             onClick={() => history.push("/user/register_for_covid_vaccine")}
-            disabled={isProfileAdded}
-          >
-            {isProfileAdded
-              ? "You have registered for vaccination"
-              : "Register for vaccination"}
-          </Button>
+  disabled =
+      {isProfileAdded} >
+      {isProfileAdded ? "You have registered for vaccination"
+                      : "Register for vaccination"}</Button>
         </span>
       </Typography>
       <div style={{ marginBottom: "3vh" }}>
@@ -96,69 +93,55 @@ export const UserDashBoard = ({ history }) => {
           >
             Name
           </Typography>
-          <Typography variant="body1">{firstName + " " + lastName}</Typography>
+      <Typography variant = "body1">{firstName + " " +
+                                     lastName}</Typography>
         </div>
-        <div style={{ marginBottom: "2vh" }}>
-          <Typography
-            variant="h5"
-            color="secondary"
-            style={{ marginBottom: "1vh" }}
-          >
-            Email
-          </Typography>
+      <div style = {{ marginBottom: "2vh" }}>< Typography
+  variant = "h5"
+  color = "secondary"
+  style =
+      {{ marginBottom: "1vh" }} >
+      Email<
+          /Typography>
           <Typography variant="body1">{email}</Typography>
-        </div>
       </div>
-      <div style={{ paddingBottom: " 3vh" }}>
-        <div style={{ marginBottom: "3vh" }}>
-          <Typography
-            variant="h5"
-            color="secondary"
-            style={{ marginBottom: "2vh" }}
-          >
-            Your nearest vaccination center
-          </Typography>
+      </div><div style = {{ paddingBottom: " 3vh" }}>
+      <div style = {{ marginBottom: "3vh" }}>< Typography
+  variant = "h5"
+  color = "secondary"
+  style =
+      {{ marginBottom: "2vh" }} >
+      Your nearest vaccination center<
+          /Typography>
           {nearestAdmin && (
             <div>
               <Typography variant="body1">
-                <b style={{ marginRight: "7px" }}>Admin Name</b>
-                {nearestAdmin.firstName + " " + nearestAdmin.lastName}
-              </Typography>
+                <b style={{ marginRight: "7px" }}>Admin Name</b>{
+          nearestAdmin.firstName + " " + nearestAdmin.lastName}<
+          /Typography>
               <Typography variant="body1">
-                <b style={{ marginRight: "7px" }}>Email</b>
-                <a
-                  style={{
-                    textDecoration: "none",
-                    color: "grey",
-                  }}
-                  href={`mailto:${nearestAdmin.email}`}
-                >
-                  {nearestAdmin.email}
-                </a>
+                <b style={{ marginRight: "7px" }}>Email</b><
+      a
+  style =
+  {
+    { textDecoration: "none", color: "grey", }
+  } href = {`mailto:${nearestAdmin.email}`} >
+           {nearestAdmin.email}</a>
               </Typography>
-            </div>
+           </div>
           )}
-        </div>
-        <ReactMapGL
-          {...viewport}
-          onViewportChange={(viewport) => setViewport(viewport)}
-          height="70vh"
-          width="70vw"
-          mapboxApiAccessToken={process.env.REACT_APP_MAP_TOKEN}
-          mapStyle={process.env.REACT_APP_MAP_STYLE_URL}
-        >
-          <Marker latitude={coordinates[0]} longitude={coordinates[1]}>
-            <button className="marker-btn">
-              <img
-                src={
-                  !isVaccinated
-                    ? "/redPatientIcon.png"
-                    : "/greenPatientIcon.png"
-                }
-                alt={firstName + " " + lastName}
-              />
-            </button>
-          </Marker>
+        </div><
+           ReactMapGL{...viewport} onViewportChange = {
+               (viewport) => setViewport(viewport)} height = "70vh"
+  width = "70vw"
+  mapboxApiAccessToken = {process.env.REACT_APP_MAP_TOKEN} mapStyle =
+      {process.env.REACT_APP_MAP_STYLE_URL} >
+      <Marker latitude = {coordinates[0]} longitude = {coordinates[1]}>
+      <button className = "marker-btn">< img
+  src = {!isVaccinated ? "/redPatientIcon.png" : "/greenPatientIcon.png"} alt =
+  { firstName + " " + lastName } />
+            </button > <
+      /Marker>
           {admins.map(
             ({ firstName, lastName, email, location: { coordinates } }) => (
               <Marker
@@ -178,11 +161,12 @@ export const UserDashBoard = ({ history }) => {
                   }
                 >
                   <img
-                    src="/vaccinationIcon.webp"
-                    alt={firstName + " " + lastName}
-                  />
-                </button>
-              </Marker>
+                    src="/vaccinationIcon
+          .webp "
+  alt =
+  { firstName + " " + lastName } />
+                </button >
+      </Marker>
             )
           )}
           {shortestPathLine && (
@@ -199,7 +183,7 @@ export const UserDashBoard = ({ history }) => {
                   "line-cap": "round",
                 }}
               />
-            </Source>
+      </Source>
           )}
           {selectedAdmin && (
             <Popup
@@ -209,16 +193,14 @@ export const UserDashBoard = ({ history }) => {
             >
               <div className="popup">
                 <Typography variant="body1">
-                  <b style={{ marginRight: "7px" }}>Admin Name</b>
-                  {selectedAdmin.firstName + " " + selectedAdmin.lastName}
-                </Typography>
+                  <b style={{ marginRight: "7px" }}>Admin Name</b>{
+          selectedAdmin.firstName + " " + selectedAdmin.lastName}<
+          /Typography>
                 <Typography variant="body1">
-                  <b style={{ marginRight: "7px" }}>Email</b>
-                  <a
-                    style={{
-                      textDecoration: "none",
-                      color: "grey",
-                    }}
+                  <b style={{ marginRight: "7px" }}>Email</b><
+      a
+                    style={
+    { textDecoration: "none", color: "grey", }}
                     href={`mailto:${selectedAdmin.email}`}
                   >
                     {email}
@@ -226,9 +208,8 @@ export const UserDashBoard = ({ history }) => {
                 </Typography>
               </div>
             </Popup>
-          )}
-        </ReactMapGL>
-      </div>
-    </Container>
+          )
+}</ReactMapGL>
+      </div>< /Container>
   );
 };
