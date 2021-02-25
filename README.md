@@ -1,7 +1,7 @@
-# Team Infinity's Official Code Repository for EY Techathon 2021
+# Covid Vaccine Distribution System
 
-![GitHub Actions](https://github.com/NBNARADHYA/ey-techathon-team-infinity/actions/workflows/deploy.yml/badge.svg)
-[![Netlify Status](https://api.netlify.com/api/v1/badges/be01e56c-1eac-4a73-9aee-57dd9be3af0f/deploy-status)](https://app.netlify.com/sites/covid-vaccine-distribution/deploys)
+![GitHub Actions](https://github.com/NBNARADHYA/covid-vaccine-distribution/actions/workflows/deploy.yml/badge.svg)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/be01e56c-1eac-4a73-9aee-57dd9be3af0f/deploy-status)](https://app.netlify.com/sites/covidvaccinedistribution/deploys)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ## Working Demo
