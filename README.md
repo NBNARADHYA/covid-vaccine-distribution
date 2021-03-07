@@ -34,15 +34,21 @@
 2. Clone your forked repo to your local machine:
 
 ```
-git clone https://github.com/<your_username>/ey-techathon.git
+git clone https://github.com/NBNARADHYA/covid-vaccine-distribution.git (https)
+```
+
+or
+
+```
+git clone git@github.com:NBNARADHYA/covid-vaccine-distribution.git (ssh)
 ```
 
 This will make a copy of the code to your local machine.
 
-3. Change directory to `ey-techathon`.
+3. Change directory to `covid-vaccine-distribution`.
 
 ```
-cd ey-techathon
+cd covid-vaccine-distribution
 ```
 
 4. Check the remote of your local repo by:
@@ -54,23 +60,45 @@ git remote -v
 It should output the following:
 
 ```
-origin	https://github.com/<username>/ey-techathon.git (fetch)
-origin	https://github.com/<username>/ey-techathon.git (push)
+origin	https://github.com/<username>/covid-vaccine-distribution.git (fetch)
+origin	https://github.com/<username>/covid-vaccine-distribution.git (push)
+```
+
+or
+
+```
+origin	git@github.com:<username>/covid-vaccine-distribution.git (fetch)
+origin	git@github.com:<username>/covid-vaccine-distribution.git (push)
 ```
 
 Add upstream to remote:
 
 ```
-git remote add upstream https://github.com/NBNARADHYA/ey-techathon.git
+git remote add upstream https://github.com/NBNARADHYA/covid-vaccine-distribution.git (https)
+```
+
+or
+
+```
+git remote add upstream git@github.com:NBNARADHYA/covid-vaccine-distribution.git (ssh)
 ```
 
 Running `git remote -v` should then print the following:
 
 ```
-origin	https://github.com/<username>/ey-techathon.git (fetch)
-origin	https://github.com/<username>/ey-techathon.git (push)
-upstream	https://github.com/NBNARADHYA/ey-techathon (fetch)
-upstream	https://github.com/NBNARADHYA/ey-techathon (push)
+origin	https://github.com/<username>/covid-vaccine-distribution.git (fetch)
+origin	https://github.com/<username>/covid-vaccine-distribution.git (push)
+upstream	https://github.com/NBNARADHYA/covid-vaccine-distribution.git (fetch)
+upstream	https://github.com/NBNARADHYA/covid-vaccine-distribution.git (push)
+```
+
+or
+
+```
+origin	git@github.com:<username>/covid-vaccine-distribution.git (fetch)
+origin	git@github.com:<username>/covid-vaccine-distribution.git (push)
+upstream	git@github.com:NBNARADHYA/covid-vaccine-distribution.git (fetch)
+upstream	git@github.com:NBNARADHYA/covid-vaccine-distribution.git (push)
 ```
 
 ## Dev Setup
@@ -84,7 +112,7 @@ upstream	https://github.com/NBNARADHYA/ey-techathon (push)
 
 #### Steps
 
-1. Make sure you are in the root of the project (i.e., `./ey-techathon/` folder).
+1. Make sure you are in the root of the project (i.e., `./covid-vaccine-distribution/` folder).
 2. Setup environement variables in `.env` files of all `services` and `root` according to `.example.env` files.
 3. Run `docker-compose up` to spin up the containers.
 4. The website would then be available locally at `http://localhost:WEB_PORT/`. (`WEB_PORT` in `.env`)
