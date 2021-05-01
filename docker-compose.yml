@@ -19,7 +19,9 @@ services:
       dockerfile: Dockerfile.dev
     container_name: model
     volumes:
-      - ./services/model/:/usr/app
+      - ./services/model/:/app
+    ports:
+      - "${MODEL_PORT_HOST}:80"
 
   server:
     build:
