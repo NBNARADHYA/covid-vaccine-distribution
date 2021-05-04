@@ -205,7 +205,7 @@ export const AdminDashBoard = ({ history }) => {
                     (day) => registeredPatients["vaccinated"][day]?.length || 0
                   ),
                   borderColor: "#00e600",
-                  backgroundColor: "#b3ffb3",
+                  backgroundColor: "#66ff66",
                 },
                 {
                   label: "#patients scheduled for vaccination",
@@ -213,7 +213,7 @@ export const AdminDashBoard = ({ history }) => {
                     (day) => registeredPatients["scheduled"][day]?.length | 0
                   ),
                   borderColor: "#ff4d4d",
-                  backgroundColor: "#ffb3b3",
+                  backgroundColor: "#ff6666",
                 },
               ],
             }}
@@ -222,7 +222,6 @@ export const AdminDashBoard = ({ history }) => {
                 yAxes: [
                   {
                     ticks: {
-                      fontColor: "white",
                       fontSize: 18,
                       beginAtZero: true,
                     },
@@ -234,7 +233,6 @@ export const AdminDashBoard = ({ history }) => {
                 xAxes: [
                   {
                     ticks: {
-                      fontColor: "white",
                       fontSize: 14,
                     },
                     gridLines: {

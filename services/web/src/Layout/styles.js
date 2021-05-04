@@ -3,10 +3,10 @@ import {
   responsiveFontSizes,
   makeStyles,
 } from "@material-ui/core/styles";
-import { amber } from "@material-ui/core/colors";
+import { blue } from "@material-ui/core/colors";
 
 let theme = createMuiTheme({
-  palette: { type: "dark", primary: amber, secondary: amber },
+  palette: { primary: blue, secondary: blue },
 });
 
 theme = responsiveFontSizes(theme);
@@ -14,8 +14,8 @@ theme = responsiveFontSizes(theme);
 const useStyle = makeStyles(() => ({
   root: {
     width: "auto",
-    backgroundColor: "#000000",
-    color: theme.palette.text.primary,
+    backgroundColor: "#ffffff",
+    color: '#000000',
   },
 }));
 

@@ -39,8 +39,8 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     height: 50,
     paddingLeft: theme.spacing(4),
-    backgroundColor: "#ff9800",
-    color: "black",
+    backgroundColor: "#2196f3",
+    color: "white",
   },
   img: {
     display: "block",
@@ -202,7 +202,7 @@ export const Home = ({ history }) => {
                     patient.isVaccinated ? patient.count : 0
                   ),
                   borderColor: "#00e600",
-                  backgroundColor: "#b3ffb3",
+                  backgroundColor: "#66ff66",
                 },
                 {
                   label: "#patients scheduled for vaccination",
@@ -210,14 +210,13 @@ export const Home = ({ history }) => {
                     !patient.isVaccinated ? patient.count : 0
                   ),
                   borderColor: "#ff4d4d",
-                  backgroundColor: "#ffb3b3",
+                  backgroundColor: "#ff6666",
                 },
               ],
             }}
             options={{
               legend: {
                 labels: {
-                  fontColor: "white",
                   fontSize: 18,
                 },
               },
@@ -225,7 +224,6 @@ export const Home = ({ history }) => {
                 yAxes: [
                   {
                     ticks: {
-                      fontColor: "white",
                       fontSize: 18,
                       beginAtZero: true,
                     },
@@ -237,7 +235,6 @@ export const Home = ({ history }) => {
                 xAxes: [
                   {
                     ticks: {
-                      fontColor: "white",
                       fontSize: 14,
                     },
                     gridLines: {
@@ -293,14 +290,14 @@ export const Home = ({ history }) => {
             steps={maxSteps}
             position="static"
             variant="text"
-            style={{ backgroundColor: "#ff9800", color: "black" }}
+            style={{ backgroundColor: "#2196f3", color: "white" }}
             activeStep={activePlotStep}
             nextButton={
               <Button
                 size="small"
                 onClick={handlePlotNext}
                 disabled={activePlotStep === maxSteps - 1}
-                style={{ color: "black" }}
+                style={{ color: "white" }}
               >
                 Next
                 {theme.direction === "rtl" ? (
@@ -315,7 +312,7 @@ export const Home = ({ history }) => {
                 size="small"
                 onClick={handlePlotBack}
                 disabled={activePlotStep === 0}
-                style={{ color: "black" }}
+                style={{ color: "white" }}
               >
                 {theme.direction === "rtl" ? (
                   <KeyboardArrowRight />

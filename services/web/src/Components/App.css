@@ -1,3 +1,7 @@
+body {
+  font-family: "Roboto", sans-serif !important;
+}
+
 .marker-btn {
   background: none;
   border: none;
@@ -45,4 +49,35 @@
 .ap-dropdown-menu {
   color: black;
   text-align: start;
+}
+
+.rcw-widget-container {
+  max-width: 25vw !important;
+}
+
+.rcw-launcher {
+  background-color: #2196f3 !important;
+}
+
+.rcw-conversation-container .rcw-header {
+  background-color: #2196f3 !important;
+}
+
+.rcw-client .rcw-message-text {
+  background-color: #2196f3 !important;
+  color: white;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.8);
 }

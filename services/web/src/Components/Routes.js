@@ -4,6 +4,7 @@ import { Auth } from "./auth";
 import { Home } from "./Home";
 import { SuperUser } from "./su";
 import { User } from "./user";
+import { Layout } from "../Layout";
 
 const Routes = () => (
   <Switch>

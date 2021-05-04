@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
   },
   link: {
     textDecoration: "none",
-    color: "black",
+    color: "white",
   },
   login: {
     fontSize: "20px",

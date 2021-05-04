@@ -112,11 +112,7 @@ export const RegisterForVaccination = ({ history }) => {
         </Typography>
       </div>
       <Container>
-        <Stepper
-          activeStep={activeStep}
-          orientation="vertical"
-          style={{ backgroundColor: "black" }}
-        >
+        <Stepper activeStep={activeStep} orientation="vertical">
           {steps.map((step, index) => (
             <Step key={step.label}>
               <StepLabel style={{ marginBottom: "2vh" }}>
