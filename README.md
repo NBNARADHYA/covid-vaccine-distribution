@@ -6,21 +6,11 @@
 
 ## Working Demo
 
-1. Home page with all the stats and trends.
+[![Live Demo](https://img.youtube.com/vi/pep8moUPzuM/default.jpg)](https://youtu.be/pep8moUPzuM)
 
-   ![Home page demo](workingDemo/homePage.gif)
+## Project Presentation
 
-2. User(patient) signing up and registering for the vaccination.
-
-   ![User Actions](workingDemo/user.gif)
-
-3. Super user (vaccination production center) dispatches a new batch of vaccines
-
-   ![Super user actions](workingDemo/superUser.gif)
-
-4. Admin (vaccination center) schedules time slots for those patients who have be prioritized by the super user and dispatched vaccines.
-
-   ![Admin actions](workingDemo/admin.gif)
+[![Project Presentation](https://img.youtube.com/vi/7urDebinsjg/default.jpg)](https://youtu.be/7urDebinsjg)
 
 ## Contributing Guidelines
 
